@@ -546,7 +546,7 @@ function BookingPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">New Consignment Manifest</h1>
-        <p className="text-gray-400 text-sm mt-0.5">Register a cargo booking into the DTDC express router.</p>
+        <p className="text-gray-400 text-sm mt-0.5">Register a cargo booking into the Desk To Desk express router.</p>
       </div>
 
       {/* Modern Glowing Stepper */}
@@ -1110,7 +1110,7 @@ function StickerPage() {
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-xs">D</div>
                   <div>
-                    <p className="font-black text-xs tracking-tighter leading-none">DTDC EXPRESS</p>
+                    <p className="font-black text-xs tracking-tighter leading-none">DESK TO DESK COURIER & CARGO</p>
                     <p className="text-[8px] font-bold text-slate-500">COURIER & OPERATIONAL SYSTEMS</p>
                   </div>
                 </div>
@@ -1330,7 +1330,7 @@ function SettingsPage() {
   const [settings, setSettings] = useState({
     emailNotif: true, smsNotif: false, pushNotif: true,
     autoAssign: true, requireOtp: true, twoFactor: false,
-    companyName: 'DTDC Express Ltd.', supportEmail: 'support@dtdc.com', timezone: 'Asia/Kolkata',
+    companyName: 'Desk To Desk Courier & Cargo Ltd.', supportEmail: 'support@desktodesk.com', timezone: 'Asia/Kolkata',
   })
 
   const toggle = (key: string) => setSettings(s => ({ ...s, [key]: !s[key as keyof typeof s] }))
@@ -1442,7 +1442,7 @@ export function DtdcErpDashboard() {
 
   const [userProfile, setUserProfile] = useState({
     name: 'Admin Commander',
-    email: 'ops@dtdc.com',
+    email: 'ops@desktodesk.com',
     phone: '9800000000',
     role: 'Central Administrator',
     city: 'Mumbai HQ',
@@ -1504,7 +1504,7 @@ export function DtdcErpDashboard() {
           {!sidebarCollapsed && (
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 bg-primary-red rounded-lg flex-shrink-0 flex items-center justify-center text-white font-black text-xs shadow-neon-red">D</div>
-              <span className={cn('font-black text-sm tracking-widest text-white')}>DTDC ERP</span>
+              <span className={cn('font-black text-sm tracking-widest text-white')}>DESK TO DESK ERP</span>
             </div>
           )}
           <button onClick={() => setSidebarCollapsed(c => !c)} className={cn('p-1.5 rounded-lg transition-colors ml-auto hover:bg-white/5 text-gray-400 hover:text-white')}>
@@ -1556,7 +1556,7 @@ export function DtdcErpDashboard() {
               <div className="flex items-center justify-between p-4 border-b border-white/5 h-16">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 bg-primary-red rounded-lg flex items-center justify-center text-white font-black text-xs shadow-neon-red">D</div>
-                  <span className="font-black text-sm tracking-widest text-white">DTDC ERP</span>
+                  <span className="font-black text-sm tracking-widest text-white">DESK TO DESK ERP</span>
                 </div>
                 <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400">
                   <X size={18} />
@@ -1829,8 +1829,8 @@ export function DtdcErpDashboard() {
               <div className="p-6 space-y-4">
                 {[
                   { icon: Phone, label: 'Central Helpline', value: '1800-123-4567', sub: 'Hub Support hours: 24/7' },
-                  { icon: Mail, label: 'Email Systems Support', value: 'systems@dtdc.com', sub: 'Response inside 1 hr' },
-                  { icon: MapPinIcon, label: 'Headquarters Depot', value: 'DTDC Executive Plaza, Bangalore', sub: 'India Ops' },
+                  { icon: Mail, label: 'Email Systems Support', value: 'systems@desktodesk.com', sub: 'Response inside 1 hr' },
+                  { icon: MapPinIcon, label: 'Headquarters Depot', value: 'Desk To Desk Executive Plaza, Bangalore', sub: 'India Ops' },
                 ].map(item => (
                   <div key={item.label} className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
                     <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 text-accent-cyan">
@@ -1843,7 +1843,7 @@ export function DtdcErpDashboard() {
                     </div>
                   </div>
                 ))}
-                <p className="text-[10px] text-gray-500 text-center pt-1 font-semibold">DTDC Operational Command Center v2.4 (Internal)</p>
+                <p className="text-[10px] text-gray-500 text-center pt-1 font-semibold">Desk To Desk Operational Command Center v2.4 (Internal)</p>
               </div>
             </motion.div>
           </motion.div>
