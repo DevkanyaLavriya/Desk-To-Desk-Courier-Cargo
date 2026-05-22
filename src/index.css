@@ -71,10 +71,20 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Dropdowns need opaque dark bg so content behind doesn't bleed through */
+.dark .dropdown-panel {
+  background: #0f1623 !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.6) !important;
+}
+
 html:not(.dark) .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.06);
 }
 
 /* Floating animated background blobs */
@@ -158,4 +168,95 @@ html:not(.dark) .glass-panel {
   position: relative;
   z-index: 10;
   margin: 1px;
+}
+
+/* ── Light theme overrides for dark-only utility patterns ── */
+
+/* text-white is invisible on white background in light mode */
+html:not(.dark) .text-white {
+  color: #111827 !important;
+}
+
+html:not(.dark) .hover\:text-white:hover {
+  color: #111827 !important;
+}
+
+/* Semi-transparent white backgrounds → light neutral backgrounds */
+html:not(.dark) .bg-white\/5,
+html:not(.dark) [class*="bg-white/5"] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not(.dark) .bg-white\/\[0\.02\] {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+html:not(.dark) .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+html:not(.dark) .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .bg-white\/\[0\.01\] {
+  background-color: rgba(0, 0, 0, 0.01) !important;
+}
+
+/* White borders → light gray borders */
+html:not(.dark) .border-white\/5,
+html:not(.dark) .border-white\/10,
+html:not(.dark) .border-white\/20 {
+  border-color: #e5e7eb !important;
+}
+
+html:not(.dark) .hover\:border-white\/10:hover,
+html:not(.dark) .hover\:border-white\/20:hover {
+  border-color: #d1d5db !important;
+}
+
+html:not(.dark) .divide-white\/5 > * + * {
+  border-color: #e5e7eb !important;
+}
+
+/* Dark text that needs to be readable in light mode */
+html:not(.dark) .text-gray-300 {
+  color: #374151 !important;
+}
+
+html:not(.dark) .text-gray-200 {
+  color: #374151 !important;
+}
+
+/* Dark selects → light backgrounds */
+html:not(.dark) select.bg-slate-900 {
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+/* Dark section headers (bg-gray-800) */
+html:not(.dark) .bg-gray-800 {
+  background-color: #f3f4f6 !important;
+}
+
+/* Notification dot (unread) in light mode */
+html:not(.dark) .bg-accent-cyan\/5 {
+  background-color: rgba(0, 212, 255, 0.05) !important;
+}
+
+/* Table rows hover */
+html:not(.dark) .hover\:bg-white\/\[0\.02\]:hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Sidebar / topbar backgrounds are handled by glass-panel; ensure text is dark */
+html:not(.dark) .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Force sidebar items and nav icons to be dark-readable */
+html:not(.dark) nav .text-gray-400,
+html:not(.dark) header .text-gray-400 {
+  color: #6b7280 !important;
 }

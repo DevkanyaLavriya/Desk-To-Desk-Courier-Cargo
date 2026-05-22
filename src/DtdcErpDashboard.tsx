@@ -129,16 +129,16 @@ function formatCurrency(amount: number) {
 
 function StatusBadge({ status }: { status: string }) {
   const statusColors: Record<string, string> = {
-    'In Transit': 'bg-blue-950/40 text-blue-400 border border-blue-800/40',
-    'Delivered': 'bg-green-950/40 text-green-400 border border-green-800/40',
-    'Pending': 'bg-yellow-950/40 text-yellow-400 border border-yellow-800/40',
-    'Failed': 'bg-red-950/40 text-red-400 border border-red-800/40',
-    'Out for Delivery': 'bg-purple-950/40 text-purple-400 border border-purple-800/40',
-    'Active': 'bg-green-950/40 text-green-400 border border-green-800/40',
-    'Inactive': 'bg-gray-800 text-gray-400 border border-gray-700/50',
+    'In Transit': 'bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800/40',
+    'Delivered': 'bg-green-100 text-green-700 border border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-800/40',
+    'Pending': 'bg-yellow-100 text-yellow-700 border border-yellow-200 dark:bg-yellow-950/40 dark:text-yellow-400 dark:border-yellow-800/40',
+    'Failed': 'bg-red-100 text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800/40',
+    'Out for Delivery': 'bg-purple-100 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-800/40',
+    'Active': 'bg-green-100 text-green-700 border border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-800/40',
+    'Inactive': 'bg-gray-100 text-gray-500 border border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700/50',
   }
   return (
-    <span className={cn('px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider', statusColors[status] ?? 'bg-gray-800 text-gray-400')}>
+    <span className={cn('px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider', statusColors[status] ?? 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400')}>
       {status}
     </span>
   )
@@ -152,7 +152,7 @@ function StatCard({ title, value, change, icon: Icon, color, percent }: { title:
       <div className={cn("absolute -right-6 -bottom-6 w-24 h-24 rounded-full blur-2xl opacity-10 transition-opacity group-hover:opacity-20", color)} />
       
       <div className="flex items-center justify-between mb-4 relative z-10">
-        <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 text-white group-hover:scale-110 transition-transform')}>
+        <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 text-gray-900 dark:text-white group-hover:scale-110 transition-transform')}>
           <Icon size={22} className={cn(color === 'bg-blue-500' ? 'text-accent-cyan' : color === 'bg-purple-500' ? 'text-purple-400' : color === 'bg-green-500' ? 'text-green-400' : 'text-primary-red')} />
         </div>
         <span className={cn('text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1 bg-white/5 border', positive ? 'text-green-400 border-green-500/20' : 'text-red-400 border-red-500/20')}>
@@ -162,7 +162,7 @@ function StatCard({ title, value, change, icon: Icon, color, percent }: { title:
       </div>
       
       <div className="space-y-1 relative z-10">
-        <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">{value}</p>
+        <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">{value}</p>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{title}</p>
       </div>
 
@@ -178,14 +178,14 @@ function CustomTooltip({ active, payload, label }: any) {
   if (active && payload && payload.length) {
     return (
       <div className="glass-panel p-3 border border-white/10 rounded-xl shadow-glass text-xs">
-        <p className="font-bold text-gray-300 mb-1.5">{label}</p>
+        <p className="font-bold text-gray-700 dark:text-gray-300 mb-1.5">{label}</p>
         {payload.map((p: any, i: number) => (
           <div key={i} className="flex items-center gap-4 justify-between py-0.5">
             <span className="flex items-center gap-1.5 font-medium text-gray-400">
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: p.color }} />
               {p.name}
             </span>
-            <span className="font-bold text-white">{formatCurrency(p.value)}</span>
+            <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(p.value)}</span>
           </div>
         ))}
       </div>
@@ -200,7 +200,7 @@ function DashboardPage() {
       {/* Header section with live indicator */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2.5">
             Logistics Command Center
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -210,7 +210,7 @@ function DashboardPage() {
           <p className="text-gray-400 text-sm mt-0.5 font-medium">Real-time terminal operations, shipping indices, and network performance.</p>
         </div>
         <div className="flex gap-2">
-          <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+          <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
             <RefreshCw size={12} /> Sync Logs
           </button>
         </div>
@@ -230,7 +230,7 @@ function DashboardPage() {
         <div className="lg:col-span-2 glass-panel p-5 rounded-2xl relative overflow-hidden">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="font-bold text-white tracking-tight">Revenue vs Operational Expenses</h2>
+              <h2 className="font-bold text-gray-900 dark:text-white tracking-tight">Revenue vs Operational Expenses</h2>
               <p className="text-xs text-gray-400">Monthly financial performance breakdown</p>
             </div>
             <div className="flex gap-4 text-xs font-semibold text-gray-400">
@@ -263,7 +263,7 @@ function DashboardPage() {
         {/* Delivery Status Donut Chart */}
         <div className="glass-panel p-5 rounded-2xl flex flex-col justify-between">
           <div>
-            <h2 className="font-bold text-white tracking-tight">Delivery Index</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white tracking-tight">Delivery Index</h2>
             <p className="text-xs text-gray-400 mb-4">Volume breakdown of active manifests</p>
           </div>
           <div className="relative flex items-center justify-center h-40">
@@ -276,7 +276,7 @@ function DashboardPage() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute text-center">
-              <p className="text-2xl font-black text-white">6,783</p>
+              <p className="text-2xl font-black text-gray-900 dark:text-white">6,783</p>
               <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Shipments</p>
             </div>
           </div>
@@ -287,7 +287,7 @@ function DashboardPage() {
                   <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.color }} />
                   <span className="text-gray-400 truncate">{d.name}</span>
                 </div>
-                <span className="font-bold text-white pl-1">{d.value}</span>
+                <span className="font-bold text-gray-900 dark:text-white pl-1">{d.value}</span>
               </div>
             ))}
           </div>
@@ -300,7 +300,7 @@ function DashboardPage() {
         <div className="lg:col-span-2 glass-panel p-5 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-bold text-white tracking-tight flex items-center gap-2">
+              <h2 className="font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
                 <Navigation size={18} className="text-accent-cyan animate-pulse" />
                 Live Fleet Telemetry
               </h2>
@@ -319,15 +319,15 @@ function DashboardPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white font-mono">{v.id}</span>
+                      <span className="font-bold text-gray-900 dark:text-white font-mono">{v.id}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-white/5 border border-white/5 text-gray-300">{v.status}</span>
                     </div>
                     <p className="text-gray-400 font-semibold mt-0.5">{v.route} <span className="text-[10px] text-gray-500 font-mono">({v.coordinates})</span></p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-white">{v.driver}</p>
-                  <p className="text-gray-400 font-medium text-[10px] mt-0.5">Speed: <span className="font-mono text-accent-cyan">{v.speed}</span> · Fuel: <span className="font-mono text-white">{v.fuel}</span></p>
+                  <p className="font-bold text-gray-900 dark:text-white">{v.driver}</p>
+                  <p className="text-gray-400 font-medium text-[10px] mt-0.5">Speed: <span className="font-mono text-accent-cyan">{v.speed}</span> · Fuel: <span className="font-mono text-gray-900 dark:text-white">{v.fuel}</span></p>
                 </div>
               </div>
             ))}
@@ -337,7 +337,7 @@ function DashboardPage() {
         {/* COD Collection */}
         <div className="glass-panel p-5 rounded-2xl flex flex-col justify-between">
           <div>
-            <h2 className="font-bold text-white tracking-tight">COD Liquidity Ledger</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white tracking-tight">COD Liquidity Ledger</h2>
             <p className="text-xs text-gray-400">Cash On Delivery collection logs</p>
           </div>
           <div className="space-y-4 my-3">
@@ -351,14 +351,14 @@ function DashboardPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400 font-semibold">Collected Today</span>
-                <span className="font-bold text-white">₹3,84,200</span>
+                <span className="font-bold text-gray-900 dark:text-white">₹3,84,200</span>
               </div>
               <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                 <div className="h-full bg-accent-cyan" style={{ width: '70%' }} />
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400 font-semibold">Disbursed to Merchants</span>
-                <span className="font-bold text-white">₹2,95,000</span>
+                <span className="font-bold text-gray-900 dark:text-white">₹2,95,000</span>
               </div>
               <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                 <div className="h-full bg-green-500" style={{ width: '55%' }} />
@@ -374,7 +374,7 @@ function DashboardPage() {
         <div className="glass-panel p-5 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-bold text-white tracking-tight flex items-center gap-2">
+              <h2 className="font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
                 <ShieldAlert size={18} className="text-primary-red" />
                 NDR Exception Analysis
               </h2>
@@ -403,7 +403,7 @@ function DashboardPage() {
         <div className="glass-panel p-5 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-bold text-white tracking-tight flex items-center gap-2">
+              <h2 className="font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
                 <Award size={18} className="text-green-400" />
                 Regional Node Performance
               </h2>
@@ -413,12 +413,12 @@ function DashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {zonePerformance.map(z => (
               <div key={z.name} className="p-3 bg-white/5 border border-white/5 hover:border-white/10 transition-all rounded-xl relative group">
-                <div className="absolute right-3 top-3 w-8 h-8 rounded-full border border-white/5 flex items-center justify-center text-xs font-black text-white font-mono bg-white/5 group-hover:bg-green-500/10 group-hover:text-green-400 group-hover:border-green-500/20">
+                <div className="absolute right-3 top-3 w-8 h-8 rounded-full border border-white/5 flex items-center justify-center text-xs font-black text-gray-900 dark:text-white font-mono bg-white/5 group-hover:bg-green-500/10 group-hover:text-green-400 group-hover:border-green-500/20">
                   {z.efficiency}%
                 </div>
-                <p className="text-xs font-extrabold text-white">{z.name}</p>
+                <p className="text-xs font-extrabold text-gray-900 dark:text-white">{z.name}</p>
                 <div className="mt-3 space-y-1 text-[11px]">
-                  <p className="text-gray-400 font-medium">AWB Vol: <span className="font-bold text-white">{z.bookings}</span></p>
+                  <p className="text-gray-400 font-medium">AWB Vol: <span className="font-bold text-gray-900 dark:text-white">{z.bookings}</span></p>
                   <p className="text-gray-400 font-medium">Avg Transit: <span className="font-bold text-accent-cyan font-mono">{z.transitTime}</span></p>
                 </div>
                 <div className="mt-2 w-full h-1 bg-white/5 rounded-full overflow-hidden">
@@ -435,7 +435,7 @@ function DashboardPage() {
         {/* Driver Activity */}
         <div className="glass-panel p-5 rounded-2xl flex flex-col justify-between">
           <div>
-            <h2 className="font-bold text-white tracking-tight">Active Delivery Agents</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white tracking-tight">Active Delivery Agents</h2>
             <p className="text-xs text-gray-400 mb-4">Roster performance rating indexes</p>
           </div>
           <div className="space-y-3">
@@ -443,10 +443,10 @@ function DashboardPage() {
               <div key={d.name} className="p-3 bg-white/5 border border-white/5 rounded-xl flex items-center justify-between gap-3 text-xs">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">{d.name}</span>
+                    <span className="font-bold text-gray-900 dark:text-white">{d.name}</span>
                     <span className={cn("w-1.5 h-1.5 rounded-full pulsing-dot", d.status === 'Active' ? 'bg-green-400 text-green-400' : 'bg-gray-500 text-gray-500')} />
                   </div>
-                  <p className="text-[10px] text-gray-400 font-medium mt-0.5">{d.trips} completed trips · Load: <span className="font-mono text-white font-bold">{d.load}%</span></p>
+                  <p className="text-[10px] text-gray-400 font-medium mt-0.5">{d.trips} completed trips · Load: <span className="font-mono text-gray-900 dark:text-white font-bold">{d.load}%</span></p>
                 </div>
                 <div className="flex items-center gap-1 text-yellow-400 font-bold font-mono">
                   <Star size={11} fill="currentColor" /> {d.rating}
@@ -460,7 +460,7 @@ function DashboardPage() {
         <div className="lg:col-span-2 glass-panel p-5 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-bold text-white tracking-tight">Recent Manifest Milestones</h2>
+              <h2 className="font-bold text-gray-900 dark:text-white tracking-tight">Recent Manifest Milestones</h2>
               <p className="text-xs text-gray-400">Chronological list of shipment bookings</p>
             </div>
             <button className="text-xs font-bold text-accent-cyan hover:underline flex items-center gap-1">
@@ -483,11 +483,11 @@ function DashboardPage() {
                 {recentBookings.map(b => (
                   <tr key={b.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-3 font-mono font-bold text-accent-cyan">{b.id}</td>
-                    <td className="py-3 px-3 font-bold text-white">{b.customer}</td>
+                    <td className="py-3 px-3 font-bold text-gray-900 dark:text-white">{b.customer}</td>
                     <td className="py-3 px-3 text-gray-300 font-semibold">{b.from} → {b.to}</td>
                     <td className="py-3 px-3 text-gray-400 font-medium">{b.weight}</td>
                     <td className="py-3 px-3"><StatusBadge status={b.status} /></td>
-                    <td className="py-3 px-3 font-mono font-bold text-white text-right">{formatCurrency(b.amount)}</td>
+                    <td className="py-3 px-3 font-mono font-bold text-gray-900 dark:text-white text-right">{formatCurrency(b.amount)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -531,12 +531,12 @@ function BookingPage() {
         <CheckCircle size={40} className="text-green-400" />
       </div>
       <div>
-        <h2 className="text-2xl font-black text-white">Booking Dispatch Successful!</h2>
+        <h2 className="text-2xl font-black text-gray-900 dark:text-white">Booking Dispatch Successful!</h2>
         <p className="text-gray-400 mt-2 font-medium">Your parcel manifest has been synced and uploaded to the central ledger.</p>
         <p className="text-accent-cyan font-mono font-black text-xl mt-3 tracking-widest uppercase">DT{Date.now().toString().slice(-7)}</p>
       </div>
       <button onClick={() => { setBooked(false); setStep(1); setForm({ senderName: '', senderPhone: '', senderAddress: '', senderCity: '', senderPin: '', receiverName: '', receiverPhone: '', receiverAddress: '', receiverCity: '', receiverPin: '', weight: '', dimensions: '', serviceType: 'Express', paymentMode: 'Prepaid', description: '', insurance: false, fragile: false }) }}
-        className="px-6 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.03] transition-all text-white rounded-xl font-bold shadow-neon-red">
+        className="px-6 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.03] transition-all text-gray-900 dark:text-white rounded-xl font-bold shadow-neon-red">
         Book Another Parcel
       </button>
     </motion.div>
@@ -545,7 +545,7 @@ function BookingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">New Consignment Manifest</h1>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">New Consignment Manifest</h1>
         <p className="text-gray-400 text-sm mt-0.5">Register a cargo booking into the Desk To Desk express router.</p>
       </div>
 
@@ -554,10 +554,10 @@ function BookingPage() {
         {[1, 2, 3].map(s => (
           <div key={s} className="flex items-center gap-3 flex-shrink-0">
             <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black transition-all border',
-              step > s ? 'bg-green-500 border-green-400 text-white' : step === s ? 'bg-primary-red border-red-500 text-white shadow-neon-red' : 'bg-white/5 border-white/10 text-gray-400')}>
+              step > s ? 'bg-green-500 border-green-400 text-gray-900 dark:text-white' : step === s ? 'bg-primary-red border-red-500 text-gray-900 dark:text-white shadow-neon-red' : 'bg-white/5 border-white/10 text-gray-400')}>
               {step > s ? <Check size={16} /> : s}
             </div>
-            <span className={cn('text-xs font-bold uppercase tracking-wider', step === s ? 'text-white' : 'text-gray-500')}>
+            <span className={cn('text-xs font-bold uppercase tracking-wider', step === s ? 'text-gray-900 dark:text-white' : 'text-gray-500')}>
               {['Sender Registry', 'Package Spec', 'Ledger Preview'][s - 1]}
             </span>
             {s < 3 && <ChevronRight size={14} className="text-gray-600" />}
@@ -569,7 +569,7 @@ function BookingPage() {
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
-              <h3 className="font-bold text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Sender Information</h3>
+              <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Sender Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { label: 'Full Name', key: 'senderName', placeholder: 'Rajesh Kumar' },
@@ -579,14 +579,14 @@ function BookingPage() {
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
                     <input value={form[f.key as keyof typeof form] as string} onChange={e => updateForm(f.key, e.target.value)}
                       placeholder={f.placeholder}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                   </div>
                 ))}
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Address</label>
                   <textarea value={form.senderAddress} onChange={e => updateForm('senderAddress', e.target.value)} rows={2}
                     placeholder="Full corporate or residential pickup address"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all resize-none" />
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all resize-none" />
                 </div>
                 {[
                   { label: 'City', key: 'senderCity', placeholder: 'Mumbai' },
@@ -596,12 +596,12 @@ function BookingPage() {
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
                     <input value={form[f.key as keyof typeof form] as string} onChange={e => updateForm(f.key, e.target.value)}
                       placeholder={f.placeholder}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                   </div>
                 ))}
               </div>
               <div className="flex justify-end pt-3">
-                <button onClick={() => setStep(2)} className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.03] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-neon-red">
+                <button onClick={() => setStep(2)} className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.03] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-neon-red">
                   Proceed Spec <ArrowRight size={14} />
                 </button>
               </div>
@@ -611,7 +611,7 @@ function BookingPage() {
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
               <div className="space-y-4">
-                <h3 className="font-bold text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Receiver Information</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Receiver Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { label: 'Full Name', key: 'receiverName', placeholder: 'Priya Sharma' },
@@ -621,14 +621,14 @@ function BookingPage() {
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
                       <input value={form[f.key as keyof typeof form] as string} onChange={e => updateForm(f.key, e.target.value)}
                         placeholder={f.placeholder}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                     </div>
                   ))}
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Delivery Address</label>
                     <textarea value={form.receiverAddress} onChange={e => updateForm('receiverAddress', e.target.value)} rows={2}
                       placeholder="Destination address details"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all resize-none" />
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all resize-none" />
                   </div>
                   {[
                     { label: 'City', key: 'receiverCity', placeholder: 'Delhi' },
@@ -638,28 +638,28 @@ function BookingPage() {
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
                       <input value={form[f.key as keyof typeof form] as string} onChange={e => updateForm(f.key, e.target.value)}
                         placeholder={f.placeholder}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                     </div>
                   ))}
                 </div>
               </div>
               <div className="space-y-4">
-                <h3 className="font-bold text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Package specifications</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Package specifications</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Weight (kg)</label>
                     <input value={form.weight} onChange={e => updateForm('weight', e.target.value)} placeholder="2.5"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Dimensions (L×W×H cm)</label>
                     <input value={form.dimensions} onChange={e => updateForm('dimensions', e.target.value)} placeholder="30×20×15"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Service Type</label>
                     <select value={form.serviceType} onChange={e => updateForm('serviceType', e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-slate-900 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
                       <option>Express</option>
                       <option>Standard</option>
                       <option>Economy</option>
@@ -669,7 +669,7 @@ function BookingPage() {
                   <div>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Payment Mode</label>
                     <select value={form.paymentMode} onChange={e => updateForm('paymentMode', e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-slate-900 text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
                       <option>Prepaid</option>
                       <option>COD</option>
                       <option>To Pay</option>
@@ -690,7 +690,7 @@ function BookingPage() {
                 <button onClick={() => setStep(1)} className="px-5 py-2.5 border border-white/10 text-gray-300 rounded-xl text-xs font-bold hover:bg-white/5 transition-all flex items-center gap-2">
                   <ArrowLeft size={14} /> Sender Info
                 </button>
-                <button onClick={() => setStep(3)} className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.03] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-neon-red">
+                <button onClick={() => setStep(3)} className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.03] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-neon-red">
                   Generate Summary <ArrowRight size={14} />
                 </button>
               </div>
@@ -699,7 +699,7 @@ function BookingPage() {
 
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
-              <h3 className="font-bold text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Consignment Manifest Audit</h3>
+              <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2">Consignment Manifest Audit</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
@@ -707,11 +707,11 @@ function BookingPage() {
                   { title: 'Consignee Spec', items: [{ label: 'Name', value: form.receiverName || '—' }, { label: 'Phone', value: form.receiverPhone || '—' }, { label: 'Destination Hub', value: form.receiverCity || '—' }] },
                 ].map(section => (
                   <div key={section.title} className="bg-white/5 border border-white/5 rounded-xl p-4 space-y-2">
-                    <p className="font-extrabold text-white text-xs uppercase tracking-wider">{section.title}</p>
+                    <p className="font-extrabold text-gray-900 dark:text-white text-xs uppercase tracking-wider">{section.title}</p>
                     {section.items.map(item => (
                       <div key={item.label} className="flex justify-between text-xs">
                         <span className="text-gray-400 font-semibold">{item.label}</span>
-                        <span className="text-white font-bold">{item.value}</span>
+                        <span className="text-gray-900 dark:text-white font-bold">{item.value}</span>
                       </div>
                     ))}
                   </div>
@@ -719,7 +719,7 @@ function BookingPage() {
               </div>
 
               <div className="bg-white/5 border border-white/5 rounded-xl p-4 space-y-2">
-                <p className="font-extrabold text-white text-xs uppercase tracking-wider">Cargo specification details & Estimates</p>
+                <p className="font-extrabold text-gray-900 dark:text-white text-xs uppercase tracking-wider">Cargo specification details & Estimates</p>
                 {[
                   { label: 'Weight', value: form.weight ? `${form.weight} kg` : '—' },
                   { label: 'Service Level', value: form.serviceType },
@@ -730,7 +730,7 @@ function BookingPage() {
                 ].map(item => (
                   <div key={item.label} className="flex justify-between text-xs border-b border-white/5 last:border-0 py-1.5 last:pb-0">
                     <span className="text-gray-400 font-semibold">{item.label}</span>
-                    <span className={cn('font-bold', item.label === 'Estimated Transit Fare' ? 'text-accent-cyan text-sm font-black font-mono' : 'text-white')}>{item.value}</span>
+                    <span className={cn('font-bold', item.label === 'Estimated Transit Fare' ? 'text-accent-cyan text-sm font-black font-mono' : 'text-gray-900 dark:text-white')}>{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -739,7 +739,7 @@ function BookingPage() {
                 <button onClick={() => setStep(2)} className="px-5 py-2.5 border border-white/10 text-gray-300 rounded-xl text-xs font-bold hover:bg-white/5 transition-all flex items-center gap-2">
                   <ArrowLeft size={14} /> Package specs
                 </button>
-                <button onClick={() => setOtpModal(true)} className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-[1.03] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-green-500/20">
+                <button onClick={() => setOtpModal(true)} className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-[1.03] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-green-500/20">
                   <Check size={14} /> Sign Manifest (OTP)
                 </button>
               </div>
@@ -754,19 +754,19 @@ function BookingPage() {
             className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               className="glass-panel p-6 w-full max-w-sm rounded-2xl border border-white/10 shadow-glass">
-              <h3 className="text-lg font-black text-white mb-1 tracking-tight">Ledger OTP Sign-off</h3>
+              <h3 className="text-lg font-black text-gray-900 dark:text-white mb-1 tracking-tight">Ledger OTP Sign-off</h3>
               <p className="text-xs text-gray-400 mb-6 font-medium">Verify cargo routing details. Enter OTP sent to {form.senderPhone || '98XXXXXX10'}</p>
               <div className="flex gap-3 justify-center mb-6">
                 {otp.map((digit, i) => (
                   <input key={i} ref={otpRefs[i]} value={digit} onChange={e => handleOtpChange(i, e.target.value)}
-                    maxLength={1} className="w-12 h-12 text-center text-xl font-bold border border-white/10 rounded-xl bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan" />
+                    maxLength={1} className="w-12 h-12 text-center text-xl font-bold border border-white/10 rounded-xl bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan" />
                 ))}
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setOtpModal(false)} className="flex-1 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all">
                   Cancel
                 </button>
-                <button onClick={confirmOtp} className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all">
+                <button onClick={confirmOtp} className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white shadow-neon-red hover:scale-[1.02] transition-all">
                   Authenticate
                 </button>
               </div>
@@ -793,7 +793,7 @@ function TrackingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">AWB Telemetry Tracker</h1>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">AWB Telemetry Tracker</h1>
         <p className="text-gray-400 text-sm mt-0.5">Audit cargo coordinates and waypoint histories.</p>
       </div>
 
@@ -802,7 +802,7 @@ function TrackingPage() {
           <div className="relative flex-1">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input value={trackId} onChange={e => setTrackId(e.target.value)} placeholder="Enter tracking ID or AWB Code (e.g. DT2024001)"
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent transition-all" />
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent transition-all" />
           </div>
           <button onClick={() => setResult(trackId.trim() ? 'found' : 'notfound')}
             className="px-5 py-2.5 bg-gradient-to-r from-accent-cyan to-cyan-500 text-slate-900 rounded-xl text-xs font-bold hover:scale-[1.03] transition-all shadow-neon-cyan">
@@ -829,8 +829,8 @@ function TrackingPage() {
               <StatusBadge status="In Transit" />
             </div>
             <div className="grid grid-cols-3 gap-4 mb-8 text-xs">
-              <div><p className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Route Origin</p><p className="font-extrabold text-white mt-0.5">Mumbai HQ</p></div>
-              <div><p className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Destination Hub</p><p className="font-extrabold text-white mt-0.5">Delhi Terminal</p></div>
+              <div><p className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Route Origin</p><p className="font-extrabold text-gray-900 dark:text-white mt-0.5">Mumbai HQ</p></div>
+              <div><p className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Destination Hub</p><p className="font-extrabold text-gray-900 dark:text-white mt-0.5">Delhi Terminal</p></div>
               <div><p className="text-gray-400 font-bold uppercase tracking-wider text-[10px]">ETA Target</p><p className="font-extrabold text-accent-cyan font-mono mt-0.5">17 Jan 2024</p></div>
             </div>
             
@@ -840,13 +840,13 @@ function TrackingPage() {
                 <div key={step.label} className="flex gap-4">
                   <div className="flex flex-col items-center">
                     <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 border',
-                      step.done ? 'bg-green-500 border-green-400 text-white shadow-[0_0_12px_rgba(34,197,94,0.3)]' : 'bg-white/5 border-white/10 text-gray-500')}>
-                      {step.done ? <Check size={14} className="text-white" /> : <Clock size={14} className="text-gray-500" />}
+                      step.done ? 'bg-green-500 border-green-400 text-gray-900 dark:text-white shadow-[0_0_12px_rgba(34,197,94,0.3)]' : 'bg-white/5 border-white/10 text-gray-500')}>
+                      {step.done ? <Check size={14} className="text-gray-900 dark:text-white" /> : <Clock size={14} className="text-gray-500" />}
                     </div>
                     {i < trackingSteps.length - 1 && <div className={cn('w-0.5 h-12 mt-1', step.done ? 'bg-green-500' : 'bg-white/5')} />}
                   </div>
                   <div className="pb-6">
-                    <p className={cn('font-bold text-xs uppercase tracking-wide', step.done ? 'text-white' : 'text-gray-500')}>{step.label}</p>
+                    <p className={cn('font-bold text-xs uppercase tracking-wide', step.done ? 'text-gray-900 dark:text-white' : 'text-gray-500')}>{step.label}</p>
                     <p className="text-[11px] text-gray-400 font-medium mt-0.5">{step.time} · {step.location}</p>
                   </div>
                 </div>
@@ -858,7 +858,7 @@ function TrackingPage() {
 
       {/* Quick Access Grid */}
       <div className="glass-panel p-5 rounded-2xl">
-        <h2 className="font-bold text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2 mb-4">Live Manifest Pipelines</h2>
+        <h2 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider border-b border-white/5 pb-2 mb-4">Live Manifest Pipelines</h2>
         <div className="space-y-3">
           {recentBookings.filter(b => b.status === 'In Transit' || b.status === 'Pending').map(b => (
             <div key={b.id} className="flex items-center justify-between p-3.5 bg-white/5 border border-white/5 rounded-xl hover:border-white/10 transition-all">
@@ -883,10 +883,10 @@ function DeliveryPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Hub Manifest Delivery Queue</h1>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">Hub Manifest Delivery Queue</h1>
           <p className="text-gray-400 text-sm mt-0.5">Route mapping and manifest allocations.</p>
         </div>
-        <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+        <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
           <RefreshCw size={12} /> Sync Manifest
         </button>
       </div>
@@ -904,14 +904,14 @@ function DeliveryPage() {
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{s.label}</span>
               <s.icon size={16} className={s.color} />
             </div>
-            <p className="text-2xl font-black text-white">{s.value}</p>
+            <p className="text-2xl font-black text-gray-900 dark:text-white">{s.value}</p>
           </div>
         ))}
       </div>
 
       <div className="glass-panel rounded-2xl overflow-hidden">
         <div className="p-5 flex items-center justify-between border-b border-white/5">
-          <h2 className="font-bold text-white text-xs uppercase tracking-widest">Active Dispatch Manifest Queue</h2>
+          <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest">Active Dispatch Manifest Queue</h2>
           <button className="flex items-center gap-1.5 text-xs text-gray-300 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/5 transition-all font-bold">
             <Filter size={12} /> Manifest Filter
           </button>
@@ -924,17 +924,17 @@ function DeliveryPage() {
                   <span className="font-mono text-xs font-bold text-accent-cyan tracking-wider">{d.id}</span>
                   <StatusBadge status={d.status} />
                 </div>
-                <p className="text-sm font-bold text-white">{d.customer}</p>
+                <p className="text-sm font-bold text-gray-900 dark:text-white">{d.customer}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{d.address}</p>
               </div>
               <div className="text-right text-xs">
-                <p className="text-white font-bold">{d.agent}</p>
+                <p className="text-gray-900 dark:text-white font-bold">{d.agent}</p>
                 <p className="text-gray-400 font-semibold mt-0.5">ETA: <span className="font-mono text-accent-cyan">{d.eta}</span></p>
                 {d.attempts > 0 && <span className="text-[10px] font-bold text-primary-red bg-primary-red/10 border border-primary-red/20 px-2 py-0.5 rounded mt-1.5 inline-block">{d.attempts} exceptions</span>}
               </div>
               <div className="flex gap-2">
-                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all"><Eye size={14} /></button>
-                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all"><Phone size={14} /></button>
+                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white transition-all"><Eye size={14} /></button>
+                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white transition-all"><Phone size={14} /></button>
               </div>
             </div>
           ))}
@@ -976,10 +976,10 @@ function CustomersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Merchant Registries</h1>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">Merchant Registries</h1>
           <p className="text-gray-400 text-sm mt-0.5">{customers.length} verified cargo shippers.</p>
         </div>
-        <button onClick={openAdd} className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
+        <button onClick={openAdd} className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
           <Plus size={14} /> Add Shipper
         </button>
       </div>
@@ -988,7 +988,7 @@ function CustomersPage() {
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search shippers by name, hub, email..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-white/10 bg-white/5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
         </div>
       </div>
 
@@ -1011,16 +1011,16 @@ function CustomersPage() {
                 <tr key={c.id} className="hover:bg-white/[0.01] transition-colors">
                   <td className="py-3 px-4 font-mono font-bold text-accent-cyan">{c.id}</td>
                   <td className="py-3 px-4">
-                    <p className="font-bold text-white">{c.name}</p>
+                    <p className="font-bold text-gray-900 dark:text-white">{c.name}</p>
                     <p className="text-gray-400 mt-0.5">{c.email} · {c.phone}</p>
                   </td>
                   <td className="py-3 px-4 text-gray-300 font-semibold">{c.city}</td>
-                  <td className="py-3 px-4 text-center font-bold text-white">{c.totalShipments} AWB</td>
-                  <td className="py-3 px-4 font-mono font-bold text-white text-right">{formatCurrency(c.totalSpent)}</td>
+                  <td className="py-3 px-4 text-center font-bold text-gray-900 dark:text-white">{c.totalShipments} AWB</td>
+                  <td className="py-3 px-4 font-mono font-bold text-gray-900 dark:text-white text-right">{formatCurrency(c.totalSpent)}</td>
                   <td className="py-3 px-4"><StatusBadge status={c.status} /></td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex gap-1 justify-end">
-                      <button onClick={() => openEdit(c)} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-all"><Edit size={13} /></button>
+                      <button onClick={() => openEdit(c)} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white transition-all"><Edit size={13} /></button>
                       <button onClick={() => deleteCustomer(c.id)} className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-all"><Trash2 size={13} /></button>
                     </div>
                   </td>
@@ -1037,14 +1037,14 @@ function CustomersPage() {
             className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
               className="glass-panel p-6 w-full max-w-md border border-white/10 rounded-2xl shadow-glass">
-              <h3 className="text-base font-black text-white uppercase tracking-wider border-b border-white/5 pb-2 mb-4">{editCustomer ? 'Edit Shipper Manifest' : 'Register New Shipper'}</h3>
+              <h3 className="text-base font-black text-gray-900 dark:text-white uppercase tracking-wider border-b border-white/5 pb-2 mb-4">{editCustomer ? 'Edit Shipper Manifest' : 'Register New Shipper'}</h3>
               <div className="space-y-4">
                 {[{ label: 'Full Corporate Name', key: 'name', placeholder: 'Rajesh Kumar' }, { label: 'Contact Email', key: 'email', placeholder: 'rajesh@example.com' }, { label: 'Contact Phone', key: 'phone', placeholder: '9876543210' }, { label: 'Registered Hub City', key: 'city', placeholder: 'Mumbai' }].map(f => (
                   <div key={f.key}>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
                     <input value={form[f.key as keyof typeof form]} onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))}
                       placeholder={f.placeholder}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                   </div>
                 ))}
               </div>
@@ -1052,7 +1052,7 @@ function CustomersPage() {
                 <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all">
                   Cancel
                 </button>
-                <button onClick={save} className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all">
+                <button onClick={save} className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white shadow-neon-red hover:scale-[1.02] transition-all">
                   {editCustomer ? 'Save Specifications' : 'Authorize Shipper'}
                 </button>
               </div>
@@ -1071,10 +1071,10 @@ function StickerPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">AWB Shipping Label Generator</h1>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">AWB Shipping Label Generator</h1>
           <p className="text-gray-400 text-sm mt-0.5">Render high-density barcode manifests.</p>
         </div>
-        <button className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
+        <button className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
           <Printer size={14} /> Batch Print
         </button>
       </div>
@@ -1082,18 +1082,18 @@ function StickerPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-2 glass-panel p-5 rounded-2xl flex flex-col justify-between">
           <div>
-            <h2 className="font-bold text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">Pending Manifest Labels</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">Pending Manifest Labels</h2>
             <div className="space-y-2 max-h-[350px] overflow-y-auto pr-1">
               {recentBookings.map(b => (
                 <button key={b.id} onClick={() => setSelectedBooking(b)}
                   className={cn('w-full flex items-center gap-3 p-3 rounded-xl text-left border transition-all',
                     selectedBooking.id === b.id ? 'bg-primary-red/10 border-primary-red/40 shadow-[inset_0_0_12px_rgba(255,59,48,0.05)]' : 'border-white/5 bg-white/5 hover:border-white/10')}>
                   <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-                    selectedBooking.id === b.id ? 'bg-primary-red text-white shadow-neon-red' : 'bg-white/5 border border-white/10 text-gray-400')}>
+                    selectedBooking.id === b.id ? 'bg-primary-red text-gray-900 dark:text-white shadow-neon-red' : 'bg-white/5 border border-white/10 text-gray-400')}>
                     <Package size={14} />
                   </div>
                   <div className="min-w-0">
-                    <p className={cn('font-mono text-xs font-bold tracking-wider', selectedBooking.id === b.id ? 'text-primary-red' : 'text-white')}>{b.id}</p>
+                    <p className={cn('font-mono text-xs font-bold tracking-wider', selectedBooking.id === b.id ? 'text-primary-red' : 'text-gray-900 dark:text-white')}>{b.id}</p>
                     <p className="text-[10px] text-gray-400 font-semibold truncate">{b.customer} · {b.from} → {b.to}</p>
                   </div>
                 </button>
@@ -1104,11 +1104,11 @@ function StickerPage() {
 
         <div className="lg:col-span-3 glass-panel p-6 rounded-2xl flex flex-col justify-between">
           <div>
-            <h2 className="font-bold text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">High-Density Label Preview</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">High-Density Label Preview</h2>
             <div className="bg-white text-slate-900 border-4 border-slate-900 rounded-2xl p-5 space-y-5 shadow-2xl relative overflow-hidden font-sans">
               <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-xs">D</div>
+                  <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-gray-900 dark:text-white font-black text-xs">D</div>
                   <div>
                     <p className="font-black text-xs tracking-tighter leading-none">DESK TO DESK COURIER & CARGO</p>
                     <p className="text-[8px] font-bold text-slate-500">COURIER & OPERATIONAL SYSTEMS</p>
@@ -1150,7 +1150,7 @@ function StickerPage() {
             <button className="flex-1 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all flex items-center justify-center gap-2">
               <Download size={14} /> Download PDF
             </button>
-            <button className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
               <Printer size={14} /> Print Label
             </button>
           </div>
@@ -1189,14 +1189,14 @@ function ReportsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Central Operations Audit</h1>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">Central Operations Audit</h1>
           <p className="text-gray-400 text-sm mt-0.5 font-medium">Extract system registers and performance reports.</p>
         </div>
         <div className="flex gap-2">
           <button className="px-4 py-2 border border-white/10 text-gray-300 rounded-xl text-xs font-bold hover:bg-white/5 transition-all flex items-center gap-1.5">
             <Printer size={12} /> Print PDF
           </button>
-          <button className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red hover:scale-[1.02]">
+          <button className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red hover:scale-[1.02]">
             <Download size={12} /> Export Ledger
           </button>
         </div>
@@ -1206,13 +1206,13 @@ function ReportsPage() {
       <div className="glass-panel p-5 rounded-2xl">
         <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
           <Filter size={15} className="text-accent-cyan" />
-          <h2 className="font-bold text-white text-xs uppercase tracking-wider">Report Filter Parameters</h2>
+          <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-wider">Report Filter Parameters</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Report Type</label>
             <select value={reportType} onChange={e => setReportType(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-slate-900 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
+              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
               <option>Booking Report</option>
               <option>Delivery Report</option>
               <option>Revenue Report</option>
@@ -1222,17 +1222,17 @@ function ReportsPage() {
           <div>
             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">From Date</label>
             <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-slate-900 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
+              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
           </div>
           <div>
             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">To Date</label>
             <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-slate-900 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
+              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
           </div>
           <div>
             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Branch</label>
             <select value={branch} onChange={e => setBranch(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-slate-900 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
+              className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
               <option>All Branches</option>
               <option>Mumbai HQ</option>
               <option>Delhi</option>
@@ -1242,7 +1242,7 @@ function ReportsPage() {
         </div>
         <div className="flex gap-3 border-t border-white/5 pt-4">
           <button onClick={() => setGenerated(true)}
-            className="px-5 py-2 bg-gradient-to-r from-primary-red to-red-600 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
+            className="px-5 py-2 bg-gradient-to-r from-primary-red to-red-600 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
             <Search size={12} /> Compile Audit
           </button>
           <button onClick={() => setGenerated(false)}
@@ -1264,7 +1264,7 @@ function ReportsPage() {
             ].map(s => (
               <div key={s.label} className="glass-panel p-5 rounded-2xl">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{s.label}</p>
-                <p className="text-xl font-black text-white">{s.value}</p>
+                <p className="text-xl font-black text-gray-900 dark:text-white">{s.value}</p>
                 <p className={cn('text-[10px] font-bold mt-1.5 flex items-center gap-1', s.positive ? 'text-green-400' : 'text-red-400')}>
                   {s.positive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
                   {s.change}
@@ -1276,7 +1276,7 @@ function ReportsPage() {
           {/* Audit ledger list */}
           <div className="glass-panel rounded-2xl overflow-hidden">
             <div className="px-5 py-4 flex items-center justify-between border-b border-white/5 bg-white/[0.01]">
-              <h2 className="font-bold text-white text-xs uppercase tracking-widest">{reportType} manifests</h2>
+              <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest">{reportType} manifests</h2>
               <div className="flex gap-2">
                 <button className="px-3 py-1.5 border border-white/10 rounded-lg text-[10px] font-bold text-gray-300 hover:bg-white/5 transition-all flex items-center gap-1">
                   <Download size={11} /> CSV
@@ -1304,8 +1304,8 @@ function ReportsPage() {
                     <tr key={b.awb} className="hover:bg-white/[0.01] transition-colors">
                       <td className="py-3.5 px-4 font-mono font-bold text-accent-cyan tracking-wider">{b.awb}</td>
                       <td className="py-3.5 px-4 text-gray-400 font-semibold">{b.date}</td>
-                      <td className="py-3.5 px-4 font-bold text-white">{b.sender}</td>
-                      <td className="py-3.5 px-4 font-bold text-white">{b.receiver}</td>
+                      <td className="py-3.5 px-4 font-bold text-gray-900 dark:text-white">{b.sender}</td>
+                      <td className="py-3.5 px-4 font-bold text-gray-900 dark:text-white">{b.receiver}</td>
                       <td className="py-3.5 px-4 text-gray-300 font-semibold">{b.route}</td>
                       <td className="py-3.5 px-4">
                         <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider', reportStatusColors[b.status] ?? 'bg-gray-800 text-gray-400')}>
@@ -1313,7 +1313,7 @@ function ReportsPage() {
                           {b.status}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-mono font-bold text-white text-right">₹{b.amount}</td>
+                      <td className="py-3.5 px-4 font-mono font-bold text-gray-900 dark:text-white text-right">₹{b.amount}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1344,7 +1344,7 @@ function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">System preferences</h1>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">System preferences</h1>
         <p className="text-gray-400 text-sm mt-0.5">Control operational ledgers and admin profiles.</p>
       </div>
 
@@ -1375,12 +1375,12 @@ function SettingsPage() {
         },
       ].map(section => (
         <div key={section.title} className="glass-panel p-5 rounded-2xl">
-          <h2 className="font-bold text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">{section.title}</h2>
+          <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">{section.title}</h2>
           <div className="space-y-4">
             {section.items.map((item: any) => (
               <div key={item.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 last:border-0 pb-4 last:pb-0">
                 <div>
-                  <p className="text-xs font-bold text-white uppercase tracking-wider">{item.label}</p>
+                  <p className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">{item.label}</p>
                   {item.desc && <p className="text-[11px] text-gray-400 font-medium mt-0.5">{item.desc}</p>}
                 </div>
                 <div className="flex-shrink-0">
@@ -1388,12 +1388,12 @@ function SettingsPage() {
                   {item.type === 'input' && (
                     <input value={settings[item.key as keyof typeof settings] as string}
                       onChange={e => setSettings(s => ({ ...s, [item.key]: e.target.value }))}
-                      className="w-48 px-3.5 py-2 rounded-xl border border-white/10 bg-slate-900 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
+                      className="w-48 px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
                   )}
                   {item.type === 'select' && (
                     <select value={settings[item.key as keyof typeof settings] as string}
                       onChange={e => setSettings(s => ({ ...s, [item.key]: e.target.value }))}
-                      className="w-48 px-3.5 py-2 rounded-xl border border-white/10 bg-slate-900 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
+                      className="w-48 px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all">
                       {item.options.map((o: string) => <option key={o}>{o}</option>)}
                     </select>
                   )}
@@ -1405,7 +1405,7 @@ function SettingsPage() {
       ))}
 
       <div className="flex justify-end pt-2">
-        <button className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-white rounded-xl text-xs font-bold transition-all shadow-neon-red">
+        <button className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all shadow-neon-red">
           Save Settings preference
         </button>
       </div>
@@ -1503,11 +1503,11 @@ export function DtdcErpDashboard() {
         <div className={cn('flex items-center justify-between p-4 border-b h-16', D ? 'border-white/5' : 'border-slate-200/60')}>
           {!sidebarCollapsed && (
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-primary-red rounded-lg flex-shrink-0 flex items-center justify-center text-white font-black text-xs shadow-neon-red">D</div>
-              <span className={cn('font-black text-sm tracking-widest text-white')}>DESK TO DESK ERP</span>
+              <div className="w-7 h-7 bg-primary-red rounded-lg flex-shrink-0 flex items-center justify-center text-gray-900 dark:text-white font-black text-xs shadow-neon-red">D</div>
+              <span className={cn('font-black text-sm tracking-widest text-gray-900 dark:text-white')}>DESK TO DESK ERP</span>
             </div>
           )}
-          <button onClick={() => setSidebarCollapsed(c => !c)} className={cn('p-1.5 rounded-lg transition-colors ml-auto hover:bg-white/5 text-gray-400 hover:text-white')}>
+          <button onClick={() => setSidebarCollapsed(c => !c)} className={cn('p-1.5 rounded-lg transition-colors ml-auto hover:bg-white/5 text-gray-400 hover:text-gray-900 dark:text-white')}>
             {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
@@ -1537,7 +1537,7 @@ export function DtdcErpDashboard() {
                 <User size={15} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-white truncate">{userProfile.name}</p>
+                <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{userProfile.name}</p>
                 <p className="text-[10px] text-gray-400 font-semibold truncate mt-0.5">{userProfile.email}</p>
               </div>
             </div>
@@ -1555,8 +1555,8 @@ export function DtdcErpDashboard() {
               className="fixed inset-y-0 left-0 w-60 z-50 lg:hidden flex flex-col glass-panel border-r border-white/5">
               <div className="flex items-center justify-between p-4 border-b border-white/5 h-16">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 bg-primary-red rounded-lg flex items-center justify-center text-white font-black text-xs shadow-neon-red">D</div>
-                  <span className="font-black text-sm tracking-widest text-white">DESK TO DESK ERP</span>
+                  <div className="w-7 h-7 bg-primary-red rounded-lg flex items-center justify-center text-gray-900 dark:text-white font-black text-xs shadow-neon-red">D</div>
+                  <span className="font-black text-sm tracking-widest text-gray-900 dark:text-white">DESK TO DESK ERP</span>
                 </div>
                 <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400">
                   <X size={18} />
@@ -1568,7 +1568,7 @@ export function DtdcErpDashboard() {
                   return (
                     <button key={item.id} onClick={() => navigate(item.id)}
                       className={cn('w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold tracking-wide uppercase transition-all',
-                        isActive ? 'bg-primary-red/10 border-l-2 border-primary-red text-primary-red' : 'text-gray-400 hover:bg-white/5 hover:text-white')}>
+                        isActive ? 'bg-primary-red/10 border-l-2 border-primary-red text-primary-red' : 'text-gray-400 hover:bg-white/5 hover:text-gray-900 dark:text-white')}>
                       <item.icon size={16} />
                       {item.label}
                     </button>
@@ -1583,7 +1583,7 @@ export function DtdcErpDashboard() {
       {/* Main Core View Area */}
       <div className="flex-1 flex flex-col overflow-hidden z-10 relative">
         {/* Header */}
-        <header className={cn('h-16 border-b flex items-center px-4 gap-3 flex-shrink-0 glass-panel', D ? 'border-white/5' : 'bg-white border-slate-200/60')}>
+        <header className={cn('h-16 border-b flex items-center px-4 gap-3 flex-shrink-0 glass-panel relative z-40', D ? 'border-white/5' : 'bg-white border-slate-200/60')}>
           <button onClick={() => setMobileMenuOpen(true)} className={cn('lg:hidden p-2 rounded-lg hover:bg-white/5 text-gray-400')}>
             <Menu size={20} />
           </button>
@@ -1593,7 +1593,7 @@ export function DtdcErpDashboard() {
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input placeholder="Query shipments, manifests, shippers..."
                 className={cn('w-full pl-9 pr-4 py-2 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all border',
-                  D ? 'bg-slate-950/40 border-white/5 text-white placeholder-gray-500' : 'bg-slate-100 border-slate-200 text-slate-900')} />
+                  D ? 'bg-slate-950/40 border-white/5 text-gray-900 dark:text-white placeholder-gray-500' : 'bg-slate-100 border-slate-200 text-slate-900')} />
             </div>
           </div>
 
@@ -1608,16 +1608,16 @@ export function DtdcErpDashboard() {
             {/* Notification alert bells */}
             <div className="relative">
               <button onClick={() => { setNotifOpen(n => !n); setProfileOpen(false) }}
-                className={cn('p-2 rounded-xl transition-all border border-white/5 text-gray-400 hover:text-white hover:bg-white/5 relative')}>
+                className={cn('p-2 rounded-xl transition-all border border-white/5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-white/5 relative')}>
                 <Bell size={16} />
                 {unread > 0 && <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary-red rounded-full pulsing-dot text-primary-red" />}
               </button>
               <AnimatePresence>
                 {notifOpen && (
                   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
-                    className="absolute right-0 top-full mt-2 w-80 rounded-2xl shadow-xl z-50 border border-white/10 glass-panel overflow-hidden">
+                    className="absolute right-0 top-full mt-2 w-80 rounded-2xl shadow-xl z-50 border border-white/10 glass-panel dropdown-panel overflow-hidden">
                     <div className="p-4 border-b border-white/5 flex items-center justify-between">
-                      <p className="font-bold text-xs uppercase tracking-widest text-white">System notifications</p>
+                      <p className="font-bold text-xs uppercase tracking-widest text-gray-900 dark:text-white">System notifications</p>
                       <button onClick={() => { setNotifList(nl => nl.map(n => ({ ...n, read: true }))); setUnread(0) }}
                         className="text-[10px] text-accent-cyan hover:underline font-bold uppercase tracking-wider">Flush Alerts</button>
                     </div>
@@ -1628,7 +1628,7 @@ export function DtdcErpDashboard() {
                             !n.read && 'bg-accent-cyan/5')}>
                           <div className={cn('w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0', n.read ? 'bg-gray-600' : 'bg-accent-cyan pulsing-dot text-accent-cyan')} />
                           <div>
-                            <p className="text-xs font-bold text-gray-200">{n.text}</p>
+                            <p className="text-xs font-bold text-gray-800 dark:text-gray-200">{n.text}</p>
                             <p className="text-[10px] text-gray-500 font-semibold mt-0.5">{n.time}</p>
                           </div>
                         </div>
@@ -1651,17 +1651,17 @@ export function DtdcErpDashboard() {
               <AnimatePresence>
                 {profileOpen && (
                   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
-                    className="absolute right-0 top-full mt-2 w-48 rounded-2xl shadow-xl z-50 overflow-hidden border border-white/10 glass-panel">
+                    className="absolute right-0 top-full mt-2 w-48 rounded-2xl shadow-xl z-50 overflow-hidden border border-white/10 glass-panel dropdown-panel">
                     <div className="p-3 border-b border-white/5 bg-white/[0.01]">
-                      <p className="font-bold text-xs text-white uppercase tracking-wider">{userProfile.name}</p>
+                      <p className="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider">{userProfile.name}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5 truncate">{userProfile.email}</p>
                     </div>
                     <button onClick={() => { setProfileOpen(false); setProfileEditOpen(true); setProfileForm(userProfile); setProfileTab('info'); setPasswordError(''); setPasswordSuccess(false) }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
                       <User size={13} className="text-gray-400" /> Edit Profile
                     </button>
                     <button onClick={() => { setProfileOpen(false); setHelpOpen(true) }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
                       <HelpCircle size={13} className="text-gray-400" /> Help Desk
                     </button>
                     <button onClick={() => { setProfileOpen(false); setLogoutConfirm(true) }}
@@ -1691,7 +1691,7 @@ export function DtdcErpDashboard() {
             return (
               <button key={item.id} onClick={() => navigate(item.id)}
                 className={cn('flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-colors',
-                  isActive ? 'text-primary-red' : 'text-gray-400 hover:text-white')}>
+                  isActive ? 'text-primary-red' : 'text-gray-400 hover:text-gray-900 dark:text-white')}>
                 <item.icon size={18} />
               </button>
             )
@@ -1708,8 +1708,8 @@ export function DtdcErpDashboard() {
               className="glass-panel w-full max-w-md border border-white/10 rounded-2xl shadow-xl overflow-hidden">
               
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                <h3 className="text-base font-black text-white uppercase tracking-wider">Account Specifications</h3>
-                <button onClick={() => setProfileEditOpen(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">
+                <h3 className="text-base font-black text-gray-900 dark:text-white uppercase tracking-wider">Account Specifications</h3>
+                <button onClick={() => setProfileEditOpen(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white">
                   <X size={18} />
                 </button>
               </div>
@@ -1725,7 +1725,7 @@ export function DtdcErpDashboard() {
                 {(['info', 'password'] as const).map(tab => (
                   <button key={tab} onClick={() => { setProfileTab(tab); setPasswordError(''); setPasswordSuccess(false) }}
                     className={cn('flex-1 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all',
-                      profileTab === tab ? 'bg-primary-red text-white shadow-neon-red' : 'text-gray-400 hover:bg-white/5 hover:text-white')}>
+                      profileTab === tab ? 'bg-primary-red text-gray-900 dark:text-white shadow-neon-red' : 'text-gray-400 hover:bg-white/5 hover:text-gray-900 dark:text-white')}>
                     {tab === 'info' ? 'Parameters' : 'Ledger Key'}
                   </button>
                 ))}
@@ -1749,7 +1749,7 @@ export function DtdcErpDashboard() {
                             value={profileForm[f.key as keyof typeof profileForm]}
                             onChange={e => setProfileForm(p => ({ ...p, [f.key]: e.target.value }))}
                             placeholder={f.placeholder}
-                            className="w-full pl-10 pr-3.5 py-2 rounded-xl border border-white/10 bg-white/5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                            className="w-full pl-10 pr-3.5 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                         </div>
                       </div>
                     ))}
@@ -1759,7 +1759,7 @@ export function DtdcErpDashboard() {
                         Cancel
                       </button>
                       <button onClick={() => { setUserProfile(profileForm); setProfileEditOpen(false) }}
-                        className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-1.5">
+                        className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-1.5">
                         <Check size={14} /> Commit Changes
                       </button>
                     </div>
@@ -1778,7 +1778,7 @@ export function DtdcErpDashboard() {
                           value={passwords[f.key as keyof typeof passwords]}
                           onChange={e => { setPasswords(p => ({ ...p, [f.key]: e.target.value })); setPasswordError(''); setPasswordSuccess(false) }}
                           placeholder="••••••••"
-                          className="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
+                          className="w-full px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red focus:border-transparent transition-all" />
                       </div>
                     ))}
                     {passwordError && (
@@ -1798,7 +1798,7 @@ export function DtdcErpDashboard() {
                         if (passwords.next !== passwords.confirm) { setPasswordError('Keys do not match.'); return }
                         setPasswordSuccess(true)
                         setPasswords({ current: '', next: '', confirm: '' })
-                      }} className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all">
+                      }} className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white shadow-neon-red hover:scale-[1.02] transition-all">
                         Update Key
                       </button>
                     </div>
@@ -1820,9 +1820,9 @@ export function DtdcErpDashboard() {
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
                 <div className="flex items-center gap-2">
                   <HelpCircle size={18} className="text-accent-cyan" />
-                  <h3 className="text-base font-black text-white uppercase tracking-wider">Operational Helpdesk</h3>
+                  <h3 className="text-base font-black text-gray-900 dark:text-white uppercase tracking-wider">Operational Helpdesk</h3>
                 </div>
-                <button onClick={() => setHelpOpen(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">
+                <button onClick={() => setHelpOpen(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white">
                   <X size={18} />
                 </button>
               </div>
@@ -1838,7 +1838,7 @@ export function DtdcErpDashboard() {
                     </div>
                     <div>
                       <p className="text-[10px] text-gray-400 uppercase font-black tracking-wider leading-none mb-1">{item.label}</p>
-                      <p className="text-sm font-bold text-white">{item.value}</p>
+                      <p className="text-sm font-bold text-gray-900 dark:text-white">{item.value}</p>
                       <p className="text-[10px] text-gray-500 font-semibold">{item.sub}</p>
                     </div>
                   </div>
@@ -1860,7 +1860,7 @@ export function DtdcErpDashboard() {
               <div className="w-14 h-14 rounded-full bg-red-950/30 border border-red-500/30 flex items-center justify-center mx-auto mb-4 text-primary-red">
                 <LogOut size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-1 tracking-tight">System Sign-out?</h3>
+              <h3 className="text-lg font-black text-gray-900 dark:text-white mb-1 tracking-tight">System Sign-out?</h3>
               <p className="text-xs text-gray-400 font-medium mb-6">You will lock your current operational ledger manifest.</p>
               <div className="flex gap-3">
                 <button onClick={() => setLogoutConfirm(false)}
@@ -1868,7 +1868,7 @@ export function DtdcErpDashboard() {
                   Cancel
                 </button>
                 <button onClick={() => { setLogoutConfirm(false); alert('System session terminated successfully.') }}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 text-white rounded-xl text-xs font-bold shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-1.5">
+                  className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 text-gray-900 dark:text-white rounded-xl text-xs font-bold shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-1.5">
                   <LogOut size={14} /> Sign Out
                 </button>
               </div>
