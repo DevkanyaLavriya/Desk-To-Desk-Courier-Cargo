@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   LayoutDashboard, Package, MapPin, Truck, Users, Tag, BarChart3, Settings,
@@ -272,7 +272,7 @@ function DashboardPage() {
                 <Pie data={deliveryStatusData} cx="50%" cy="50%" innerRadius={55} outerRadius={72} paddingAngle={3} dataKey="value">
                   {deliveryStatusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip formatter={(v) => v.toLocaleString()} />
+                <Tooltip formatter={(v: any) => v?.toLocaleString() ?? ''} />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute text-center">
@@ -1471,7 +1471,7 @@ export function DtdcErpDashboard() {
     setMobileMenuOpen(false)
   }
 
-  const pageComponents: Record<ActivePage, JSX.Element> = {
+  const pageComponents: Record<ActivePage, React.ReactNode> = {
     dashboard: <DashboardPage />,
     booking: <BookingPage />,
     tracking: <TrackingPage />,
