@@ -260,3 +260,13 @@ html:not(.dark) nav .text-gray-400,
 html:not(.dark) header .text-gray-400 {
   color: #6b7280 !important;
 }
+
+/* DRS print area — force all text black regardless of dark mode */
+.drs-print-area,
+.drs-print-area * {
+  color: #000000 !important;
+}
+.drs-print-area svg text,
+.drs-print-area svg tspan {
+  fill: #000000 !important;
+}

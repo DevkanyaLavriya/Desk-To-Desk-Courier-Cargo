@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   LayoutDashboard, Package, MapPin, Truck, Users, Tag, BarChart3, Settings,
@@ -7,12 +7,16 @@ import {
   TrendingUp, TrendingDown, DollarSign, ShoppingBag, CheckCircle, XCircle,
   ArrowRight, ArrowLeft, Upload, Printer, RefreshCw, LogOut, User, HelpCircle,
   Phone, Mail, MapPin as MapPinIcon, Calendar, Hash, Weight, Layers, ShieldAlert,
-  Navigation, Star, Award
+  Navigation, Star, Award, FileText
 } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
+import Barcode from 'react-barcode'
+import { useReactToPrint } from 'react-to-print'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 
 type ActivePage = 'dashboard' | 'booking' | 'tracking' | 'delivery' | 'customers' | 'sticker' | 'reports' | 'settings'
 
@@ -77,11 +81,11 @@ const initialCustomers: CustomerRecord[] = [
 ]
 
 const deliveryList = [
-  { id: 'DT2024001', customer: 'Rajesh Kumar', address: '45 MG Road, Mumbai 400001', agent: 'Suresh D.', status: 'In Transit', eta: '2:30 PM', attempts: 0 },
-  { id: 'DT2024006', customer: 'Anita Joshi', address: '12 Park Street, Kolkata 700016', agent: 'Mohan K.', status: 'Out for Delivery', eta: '11:00 AM', attempts: 0 },
-  { id: 'DT2024009', customer: 'Deepak Rao', address: '78 Anna Salai, Chennai 600002', agent: 'Ravi P.', status: 'Delivered', eta: 'Done', attempts: 1 },
-  { id: 'DT2024012', customer: 'Meena Pillai', address: '23 Banjara Hills, Hyderabad 500034', agent: 'Arun S.', status: 'Failed', eta: 'Reschedule', attempts: 2 },
-  { id: 'DT2024015', customer: 'Sanjay Gupta', address: '56 Connaught Place, Delhi 110001', agent: 'Vinod M.', status: 'Pending', eta: '4:00 PM', attempts: 0 },
+  { id: 'DT2024001', customer: 'Rajesh Kumar', address: '45 MG Road, Mumbai 400001', phone: '9876543210', agent: 'Suresh D.', status: 'In Transit', eta: '2:30 PM', attempts: 0 },
+  { id: 'DT2024006', customer: 'Anita Joshi', address: '12 Park Street, Kolkata 700016', phone: '8844557744', agent: 'Mohan K.', status: 'Out for Delivery', eta: '11:00 AM', attempts: 0 },
+  { id: 'DT2024009', customer: 'Deepak Rao', address: '78 Anna Salai, Chennai 600002', phone: '7733221100', agent: 'Ravi P.', status: 'Delivered', eta: 'Done', attempts: 1 },
+  { id: 'DT2024012', customer: 'Meena Pillai', address: '23 Banjara Hills, Hyderabad 500034', phone: '9988776655', agent: 'Arun S.', status: 'Failed', eta: 'Reschedule', attempts: 2 },
+  { id: 'DT2024015', customer: 'Sanjay Gupta', address: '56 Connaught Place, Delhi 110001', phone: '9112233445', agent: 'Vinod M.', status: 'Pending', eta: '4:00 PM', attempts: 0 },
 ]
 
 const notifications = [
@@ -879,6 +883,90 @@ function TrackingPage() {
 }
 
 function DeliveryPage() {
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [drsModal, setDrsModal] = useState(false)
+  const [drsNo, setDrsNo] = useState('12345')
+  const [branch, setBranch] = useState('DTD')
+  const [worker, setWorker] = useState('KHILAN SINGH THAKUR')
+  const drsRef = useRef<HTMLDivElement>(null)
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+  }
+  const selectAll = () => {
+    setSelectedIds(selectedIds.length === deliveryList.length ? [] : deliveryList.map(d => d.id))
+  }
+
+  // Generate A4 PDF — renders in a clean light-mode iframe to avoid dark mode bleed
+  const generateDrsPdf = useCallback(async (_mode: 'save' | 'print') => {
+    if (!drsRef.current) return
+
+    // 1. Create hidden iframe with clean white background (no dark class)
+    const iframe = document.createElement('iframe')
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:794px;height:1123px;border:none;visibility:hidden'
+    document.body.appendChild(iframe)
+    const iDoc = iframe.contentDocument!
+    const iWin = iframe.contentWindow!
+
+    // 2. Copy all stylesheets into iframe
+    const styleLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+    const stylesHtml = styleLinks.map(s => s.outerHTML).join('\n')
+
+    // 3. Inject content — no dark class on html, force light mode
+    iDoc.open()
+    iDoc.write(`<!DOCTYPE html><html style="color-scheme:light;background:#fff"><head>
+      ${stylesHtml}
+      <style>
+        body { margin:0; padding:0; background:#fff; color:#000; }
+        * { color:#000 !important; }
+        svg text, svg tspan { fill:#000 !important; }
+        table, td, th { border-color:#000 !important; background:#fff !important; }
+      </style>
+    </head><body style="background:#fff">${drsRef.current.outerHTML}</body></html>`)
+    iDoc.close()
+
+    // 4. Wait for fonts + SVG barcodes to render
+    await new Promise(r => setTimeout(r, 500))
+
+    // 5. Capture
+    const captureEl = iDoc.body.firstElementChild as HTMLElement
+    const canvas = await html2canvas(captureEl, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      width: 794,
+      windowWidth: 794,
+      logging: false,
+    })
+    document.body.removeChild(iframe)
+
+    // 6. Build A4 PDF
+    const imgData = canvas.toDataURL('image/png')
+    const pdf = new jsPDF('p', 'mm', [210, 297])
+    const margin = 5
+    const usableW = 200
+    const usableH = 287
+    const imgW = usableW
+    const imgH = (canvas.height / canvas.width) * imgW
+    if (imgH <= usableH) {
+      pdf.addImage(imgData, 'PNG', margin, margin, imgW, imgH)
+    } else {
+      const totalPages = Math.ceil(imgH / usableH)
+      for (let i = 0; i < totalPages; i++) {
+        if (i > 0) pdf.addPage()
+        pdf.addImage(imgData, 'PNG', margin, margin - i * usableH, imgW, imgH)
+      }
+    }
+    pdf.save(`DRS_${drsNo}.pdf`)
+  }, [drsRef, drsNo])
+
+  const handleDownloadDRS = () => generateDrsPdf('save')
+  const handlePrintDRS = () => generateDrsPdf('print')
+
+  const selectedDeliveries = deliveryList.filter(d => selectedIds.includes(d.id))
+  const now = new Date()
+  const dateStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}.${now.getMinutes().toString().padStart(2,'0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -886,9 +974,19 @@ function DeliveryPage() {
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">Hub Manifest Delivery Queue</h1>
           <p className="text-gray-400 text-sm mt-0.5">Route mapping and manifest allocations.</p>
         </div>
-        <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
-          <RefreshCw size={12} /> Sync Manifest
-        </button>
+        <div className="flex gap-2">
+          <button className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+            <RefreshCw size={12} /> Sync Manifest
+          </button>
+          {selectedIds.length > 0 && (
+            <button
+              onClick={() => setDrsModal(true)}
+              className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red"
+            >
+              <FileText size={12} /> Generate DRS ({selectedIds.length})
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Grid Specs */}
@@ -911,14 +1009,35 @@ function DeliveryPage() {
 
       <div className="glass-panel rounded-2xl overflow-hidden">
         <div className="p-5 flex items-center justify-between border-b border-white/5">
-          <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest">Active Dispatch Manifest Queue</h2>
-          <button className="flex items-center gap-1.5 text-xs text-gray-300 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/5 transition-all font-bold">
-            <Filter size={12} /> Manifest Filter
-          </button>
+          <div className="flex items-center gap-3">
+            <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest">Active Dispatch Manifest Queue</h2>
+            {selectedIds.length > 0 && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-primary-red/10 border border-primary-red/20 text-primary-red">
+                {selectedIds.length} selected
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={selectAll} className="flex items-center gap-1.5 text-xs text-gray-300 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/5 transition-all font-bold">
+              <Check size={12} /> {selectedIds.length === deliveryList.length ? 'Deselect All' : 'Select All'}
+            </button>
+            <button className="flex items-center gap-1.5 text-xs text-gray-300 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/5 transition-all font-bold">
+              <Filter size={12} /> Filter
+            </button>
+          </div>
         </div>
         <div className="divide-y divide-white/5">
           {deliveryList.map(d => (
-            <div key={d.id} className="p-5 flex flex-wrap items-center gap-4 hover:bg-white/[0.01] transition-colors">
+            <div key={d.id}
+              onClick={() => toggleSelect(d.id)}
+              className={cn('p-5 flex flex-wrap items-center gap-4 transition-colors cursor-pointer',
+                selectedIds.includes(d.id) ? 'bg-primary-red/5 border-l-2 border-primary-red' : 'hover:bg-white/[0.01]'
+              )}>
+              {/* Checkbox */}
+              <div className={cn('w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all',
+                selectedIds.includes(d.id) ? 'bg-primary-red border-primary-red' : 'border-white/20 bg-white/5')}>
+                {selectedIds.includes(d.id) && <Check size={12} className="text-white" />}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="font-mono text-xs font-bold text-accent-cyan tracking-wider">{d.id}</span>
@@ -932,14 +1051,169 @@ function DeliveryPage() {
                 <p className="text-gray-400 font-semibold mt-0.5">ETA: <span className="font-mono text-accent-cyan">{d.eta}</span></p>
                 {d.attempts > 0 && <span className="text-[10px] font-bold text-primary-red bg-primary-red/10 border border-primary-red/20 px-2 py-0.5 rounded mt-1.5 inline-block">{d.attempts} exceptions</span>}
               </div>
-              <div className="flex gap-2">
-                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white transition-all"><Eye size={14} /></button>
-                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-gray-900 dark:text-white transition-all"><Phone size={14} /></button>
+              <div className="flex gap-2" onClick={e => e.stopPropagation()}>
+                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all"><Eye size={14} /></button>
+                <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all"><Phone size={14} /></button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* DRS Modal */}
+      <AnimatePresence>
+        {drsModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <motion.div initial={{ scale: 0.93, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.93, opacity: 0 }}
+              className="glass-panel w-full max-w-4xl max-h-[90vh] border border-white/10 rounded-2xl shadow-xl overflow-hidden flex flex-col">
+
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 flex-shrink-0">
+                <h3 className="text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                  <FileText size={18} className="text-accent-cyan" /> Delivery Run Sheet (DRS)
+                </h3>
+                <button onClick={() => setDrsModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* DRS Config */}
+              <div className="px-6 py-4 border-b border-white/5 flex-shrink-0">
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { label: 'DRS Number', value: drsNo, set: setDrsNo },
+                    { label: 'Branch', value: branch, set: setBranch },
+                    { label: 'Worker Name', value: worker, set: setWorker },
+                  ].map(f => (
+                    <div key={f.label}>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{f.label}</label>
+                      <input value={f.value} onChange={e => f.set(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* DRS Preview — scrollable */}
+              <div className="overflow-y-auto flex-1 p-4">
+                <div ref={drsRef} className="drs-print-area" style={{ background: '#ffffff', padding: '4mm 5mm', fontFamily: 'Arial, Helvetica, sans-serif', color: '#000', WebkitPrintColorAdjust: 'exact', colorScheme: 'light' } as React.CSSProperties}>
+                  {/* eslint-disable-next-line react/no-danger */}
+                  <style dangerouslySetInnerHTML={{ __html: `.drs-print-area, .drs-print-area *, .drs-print-area td, .drs-print-area th, .drs-print-area div, .drs-print-area span { color: #000000 !important; } .drs-print-area svg text, .drs-print-area svg tspan { fill: #000000 !important; }` }} />
+
+                  {/* ── Header: 3-col grid — logo | title center | date/branch/worker ── */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: '12px', marginBottom: '5mm' }}>
+                    {/* Col 1: logo */}
+                    <img
+                      src="/dtdc-logo-transparent.png"
+                      alt="DTDC"
+                      style={{ width: '240px', height: '90px', objectFit: 'contain', display: 'block' }}
+                    />
+                    {/* Col 2: title centered */}
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ fontSize: '26px', fontWeight: 700, color: '#000', whiteSpace: 'nowrap' }}>
+                        Delivery Run Sheet
+                      </span>
+                    </div>
+                    {/* Col 3: date/branch/worker — all left-aligned from same start point */}
+                    <div style={{ textAlign: 'left', fontSize: '11px', lineHeight: '1.9', color: '#000' }}>
+                      <div style={{ fontWeight: 700 }}>{dateStr}</div>
+                      <div style={{ fontWeight: 700 }}>Branch - {branch}</div>
+                      <div style={{ fontWeight: 700 }}>Worker - {worker}</div>
+                    </div>
+                  </div>
+
+                  {/* ── Table ── */}
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', tableLayout: 'fixed' }}>
+                    <colgroup>
+                      <col style={{ width: '6%' }} />
+                      <col style={{ width: '5%' }} />
+                      <col style={{ width: '22%' }} />
+                      <col style={{ width: '35%' }} />
+                      <col style={{ width: '16%' }} />
+                      <col style={{ width: '16%' }} />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        {['SNo', 'PCs', 'Consignee', 'AWB', 'Receiver', 'Remarks'].map(h => (
+                          <th key={h} style={{
+                            border: '1px solid #000',
+                            padding: '5px 4px',
+                            textAlign: 'center',
+                            verticalAlign: 'middle',
+                            fontWeight: 700,
+                            fontSize: '11px',
+                            color: '#000',
+                            background: '#fff',
+                          }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedDeliveries.map((d, i) => (
+                        <tr key={d.id}>
+                          {/* SNo */}
+                          <td style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'left', verticalAlign: 'middle', fontWeight: 700, fontSize: '13px', color: '#000' }}>{i + 1}</td>
+                          {/* PCs */}
+                          <td style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', verticalAlign: 'middle', fontSize: '12px', color: '#000' }}>1</td>
+                          {/* Consignee: city top-center, phone middle, AWB id bottom — exactly like PDF */}
+                          <td style={{ border: '1px solid #000', padding: '6px 8px', verticalAlign: 'middle', textAlign: 'center', color: '#000', height: '85px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
+                              <div style={{ fontSize: '11px', fontWeight: 400, color: '#000' }}>
+                                {d.address.split(',').slice(-2)[0].trim().replace(/\d+/g, '').trim().toUpperCase()}
+                              </div>
+                              <div style={{ fontSize: '10px', color: '#000' }}>{d.phone}</div>
+                              <div style={{ fontSize: '10px', color: '#000' }}>{d.id}</div>
+                            </div>
+                          </td>
+                          {/* AWB barcode — tall narrow, centered */}
+                          <td style={{ border: '1px solid #000', padding: '6px 4px', textAlign: 'center', verticalAlign: 'middle' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                              <Barcode
+                                value={d.id}
+                                format="CODE128"
+                                width={1.5}
+                                height={75}
+                                displayValue={true}
+                                fontSize={13}
+                                fontOptions=""
+                                margin={2}
+                                background="#ffffff"
+                                lineColor="#000000"
+                              />
+                            </div>
+                          </td>
+                          {/* Receiver */}
+                          <td style={{ border: '1px solid #000', padding: '6px 8px', verticalAlign: 'middle', color: '#000' }}></td>
+                          {/* Remarks */}
+                          <td style={{ border: '1px solid #000', padding: '6px 8px', verticalAlign: 'middle', color: '#000' }}></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+
+              {/* Modal Footer Buttons */}
+              <div className="px-6 py-4 border-t border-white/5 flex gap-3 flex-shrink-0">
+                <button onClick={() => setDrsModal(false)}
+                  className="px-5 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all">
+                  Cancel
+                </button>
+                <button onClick={handleDownloadDRS}
+                  className="px-5 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all flex items-center gap-2">
+                  <Download size={14} /> Download PDF
+                </button>
+                <button onClick={handlePrintDRS}
+                  className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                  <Printer size={14} /> Print DRS
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -1065,97 +1339,162 @@ function CustomersPage() {
 }
 
 function StickerPage() {
-  const [selectedBooking, setSelectedBooking] = useState(recentBookings[0])
+  const [startAwb, setStartAwb] = useState('D1015673004')
+  const [count, setCount] = useState(24)
+  const [generated, setGenerated] = useState(false)
+  const [awbList, setAwbList] = useState<string[]>([])
+  const printRef = useRef<HTMLDivElement>(null)
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: 'DTDC_Sticker_Sheet',
+    pageStyle: `
+      @page { size: A4; margin: 8mm; }
+      @media print {
+        body { -webkit-print-color-adjust: exact; }
+        .no-print { display: none !important; }
+      }
+    `,
+  })
+
+  const handleDownloadPDF = async () => {
+    if (!printRef.current) return
+    const canvas = await html2canvas(printRef.current, { scale: 2, backgroundColor: '#ffffff' })
+    const imgData = canvas.toDataURL('image/png')
+    const pdf = new jsPDF('p', 'mm', 'a4')
+    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+    pdf.save(`DTDC_Stickers_${startAwb}.pdf`)
+  }
+
+  const generateStickers = () => {
+    const prefix = startAwb.replace(/\d+$/, '')
+    const startNum = parseInt(startAwb.replace(/\D/g, ''), 10)
+    if (isNaN(startNum)) return
+    const list = Array.from({ length: count }, (_, i) => {
+      const num = String(startNum + i).padStart(startAwb.replace(/\D/g, '').length, '0')
+      return `${prefix}${num}`
+    })
+    setAwbList(list)
+    setGenerated(true)
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">AWB Shipping Label Generator</h1>
-          <p className="text-gray-400 text-sm mt-0.5">Render high-density barcode manifests.</p>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white">AWB Sticker Sheet Generator</h1>
+          <p className="text-gray-400 text-sm mt-0.5">Real scannable barcode stickers — exactly like DTDC sticker PDF.</p>
         </div>
-        <button className="px-4 py-2 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-neon-red">
-          <Printer size={14} /> Batch Print
-        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2 glass-panel p-5 rounded-2xl flex flex-col justify-between">
+      {/* Controls */}
+      <div className="glass-panel p-5 rounded-2xl no-print">
+        <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">Sticker Configuration</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div>
-            <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">Pending Manifest Labels</h2>
-            <div className="space-y-2 max-h-[350px] overflow-y-auto pr-1">
-              {recentBookings.map(b => (
-                <button key={b.id} onClick={() => setSelectedBooking(b)}
-                  className={cn('w-full flex items-center gap-3 p-3 rounded-xl text-left border transition-all',
-                    selectedBooking.id === b.id ? 'bg-primary-red/10 border-primary-red/40 shadow-[inset_0_0_12px_rgba(255,59,48,0.05)]' : 'border-white/5 bg-white/5 hover:border-white/10')}>
-                  <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-                    selectedBooking.id === b.id ? 'bg-primary-red text-gray-900 dark:text-white shadow-neon-red' : 'bg-white/5 border border-white/10 text-gray-400')}>
-                    <Package size={14} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className={cn('font-mono text-xs font-bold tracking-wider', selectedBooking.id === b.id ? 'text-primary-red' : 'text-gray-900 dark:text-white')}>{b.id}</p>
-                    <p className="text-[10px] text-gray-400 font-semibold truncate">{b.customer} · {b.from} → {b.to}</p>
-                  </div>
-                </button>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Start AWB Number</label>
+            <input
+              value={startAwb}
+              onChange={e => setStartAwb(e.target.value)}
+              placeholder="D1015673004"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-red transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Number of Stickers</label>
+            <select
+              value={count}
+              onChange={e => setCount(Number(e.target.value))}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red transition-all"
+            >
+              {[12, 24, 48, 72, 100, 150].map(n => <option key={n} value={n}>{n} Stickers</option>)}
+            </select>
+          </div>
+          <div className="flex items-end">
+            <button
+              onClick={generateStickers}
+              className="w-full px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-neon-red"
+            >
+              <Tag size={14} /> Generate Stickers
+            </button>
+          </div>
+        </div>
+
+        {generated && (
+          <div className="flex gap-3 border-t border-white/5 pt-4">
+            <button
+              onClick={handleDownloadPDF}
+              className="px-5 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all flex items-center gap-2"
+            >
+              <Download size={14} /> Download PDF
+            </button>
+            <button
+              onClick={() => handlePrint()}
+              className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center gap-2"
+            >
+              <Printer size={14} /> Print Sticker Sheet
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Sticker Sheet Preview — exactly like PDF: 3 columns */}
+      {generated && (
+        <div className="glass-panel p-4 rounded-2xl">
+          <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4 no-print">
+            Preview — {awbList.length} Stickers
+          </h2>
+          {/* printRef wraps only the white printable area */}
+          <div ref={printRef} style={{ background: '#ffffff', padding: '6mm', fontFamily: 'Arial, sans-serif' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '4mm',
+            }}>
+              {awbList.map(awb => (
+                <div key={awb} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '3mm 2mm 2mm 2mm',
+                  background: '#fff',
+                  border: '0.5px solid #ccc',
+                  pageBreakInside: 'avoid',
+                }}>
+                  {/* Actual DTDC Logo */}
+                  <img
+                    src="/dtdc-logo-transparent.png"
+                    alt="DTDC"
+                    style={{
+                      width: '82px',
+                      height: '32px',
+                      objectFit: 'contain',
+                      display: 'block',
+                      marginBottom: '2mm',
+                    }}
+                  />
+                  {/* Real Scannable Barcode — same as PDF */}
+                  <Barcode
+                    value={awb}
+                    format="CODE128"
+                    width={1.35}
+                    height={45}
+                    displayValue={true}
+                    fontSize={10}
+                    fontOptions="bold"
+                    margin={0}
+                    background="#ffffff"
+                    lineColor="#000000"
+                  />
+                </div>
               ))}
             </div>
           </div>
         </div>
-
-        <div className="lg:col-span-3 glass-panel p-6 rounded-2xl flex flex-col justify-between">
-          <div>
-            <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-4">High-Density Label Preview</h2>
-            <div className="bg-white text-slate-900 border-4 border-slate-900 rounded-2xl p-5 space-y-5 shadow-2xl relative overflow-hidden font-sans">
-              <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-gray-900 dark:text-white font-black text-xs">D</div>
-                  <div>
-                    <p className="font-black text-xs tracking-tighter leading-none">DESK TO DESK COURIER & CARGO</p>
-                    <p className="text-[8px] font-bold text-slate-500">COURIER & OPERATIONAL SYSTEMS</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono font-black text-xs tracking-wider">{selectedBooking.id}</p>
-                  <p className="text-[8px] font-bold text-slate-500">{selectedBooking.date}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-[10px]">
-                <div className="border-r border-slate-200 pr-2">
-                  <p className="text-[8px] text-slate-400 uppercase font-black tracking-wider leading-none mb-1">Origin Routing</p>
-                  <p className="font-black text-slate-900">{selectedBooking.customer}</p>
-                  <p className="font-bold text-slate-600 mt-0.5">{selectedBooking.from} HUB</p>
-                </div>
-                <div>
-                  <p className="text-[8px] text-slate-400 uppercase font-black tracking-wider leading-none mb-1">Destination Routing</p>
-                  <p className="font-black text-slate-900">Priya Sharma</p>
-                  <p className="font-bold text-slate-600 mt-0.5">{selectedBooking.to} TERMINAL</p>
-                </div>
-              </div>
-              <div className="border-t border-b border-slate-200 py-2 flex justify-between text-[9px] font-bold text-slate-600">
-                <span>MANIFEST: STANDARD</span>
-                <span>WT: {selectedBooking.weight}</span>
-                <span>VALUE: {formatCurrency(selectedBooking.amount)}</span>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-1.5 py-2">
-                <div className="flex items-center justify-center gap-0.5 h-12 bg-white w-full">
-                  {Array.from({ length: 45 }).map((_, i) => (
-                    <div key={i} className="bg-slate-900 rounded-sm" style={{ width: i % 4 === 0 ? 3 : i % 3 === 0 ? 1 : 2, height: 40 }} />
-                  ))}
-                </div>
-                <p className="font-mono text-[9px] font-black tracking-widest text-slate-900">{selectedBooking.id}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-3 mt-6">
-            <button className="flex-1 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition-all flex items-center justify-center gap-2">
-              <Download size={14} /> Download PDF
-            </button>
-            <button className="flex-1 py-2.5 bg-gradient-to-r from-primary-red to-red-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white shadow-neon-red hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-              <Printer size={14} /> Print Label
-            </button>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
