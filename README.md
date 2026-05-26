@@ -1,73 +1,194 @@
-# React + TypeScript + Vite
+# Desk To Desk Courier & Cargo — ERP Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured courier ERP dashboard built with React + TypeScript + Vite + Tailwind CSS. Designed to match real DTDC operational documents (sticker sheets, delivery run sheets).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Live Demo
 
-## React Compiler
+**Vercel:** https://dtdc-erp.vercel.app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Tool | Purpose |
+|---|---|
+| React 19 + TypeScript | UI framework |
+| Vite 8 | Dev server & build tool |
+| Tailwind CSS 3 | Styling (dark/light mode) |
+| Framer Motion | Page & modal animations |
+| Recharts | Charts (revenue, delivery status) |
+| react-barcode | Real Code128 scannable barcodes |
+| react-to-print | Browser print for sticker sheet |
+| jsPDF + html2canvas | PDF generation (A4) |
+| Lucide React | Icons |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+dtdc-erp/
+├── public/
+│   ├── dtdc-logo.png                  # Original DTDC logo
+│   └── dtdc-logo-transparent.png     # Logo with black bg removed (used in stickers/DRS)
+├── src/
+│   ├── DtdcErpDashboard.tsx          # Main app — all pages in one file
+│   ├── index.css                     # Tailwind + dark/light mode overrides
+│   ├── App.tsx                       # Root component
+│   └── main.tsx                      # Entry point
+├── package.json
+├── vite.config.ts
+├── tailwind.config.js
+└── tsconfig.json
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
+
+## Pages / Features
+
+### 1. Control Center (Dashboard)
+- Revenue area chart (monthly)
+- Delivery status pie chart
+- Active vehicles tracker
+- Live notifications panel
+- Quick stats: bookings, revenue, delivery rate, active vehicles
+
+### 2. Manifest Parcel (Booking)
+- New booking form: AWB, customer, weight, dimensions, service type
+- Booking list with status badges
+- Filter and search
+
+### 3. AWB Tracker (Tracking)
+- Search by AWB number
+- Timeline tracking with status steps
+- Estimated delivery info
+
+### 4. Dispatch Queue (Delivery)
+- Active delivery manifest list
+- Checkbox select individual or all deliveries
+- **Generate DRS** — creates Delivery Run Sheet matching real DTDC PDF format
+
+### 5. Shippers List (Customers)
+- Customer records table
+- Add / edit / delete customers
+- Search and filter
+
+### 6. Print Labels (Sticker Sheet)
+- Input start AWB number + count (up to 48)
+- Generates 3-column grid of barcode stickers
+- Each sticker: DTDC logo + Code128 barcode + AWB number
+- Print (browser) and Download PDF buttons
+
+### 7. Systems Audit (Reports)
+- Charts: failed delivery breakdown, agent performance
+- Vehicle status overview
+
+### 8. Preferences (Settings)
+- Theme toggle (dark / light)
+- Notification preferences
+
+---
+
+## Key Feature: Delivery Run Sheet (DRS)
+
+Matches actual `sample drs.pdf` DTDC format exactly.
+
+**How to use:**
+1. Go to **Dispatch Queue** in sidebar
+2. Select deliveries using checkboxes (or click "Select All")
+3. Click **Generate DRS** button (top right)
+4. Fill in DRS Number, Branch, Worker Name
+5. Click **Download PDF** or **Print DRS**
+
+**DRS Format:**
+- Header: DTDC logo (left) | "Delivery Run Sheet" (center) | Date / Branch / Worker (right)
+- Table columns: SNo | PCs | Consignee (city + phone + AWB id) | AWB barcode | Receiver | Remarks
+- A4 size (210×297mm), 5mm margins
+- PDF generated via hidden iframe + html2canvas (isolates from dark mode CSS)
+
+---
+
+## Key Feature: AWB Sticker Sheet
+
+Matches actual `SEMPLE STICKER.pdf` DTDC format exactly.
+
+**How to use:**
+1. Go to **Print Labels** in sidebar
+2. Enter starting AWB number (e.g. `D1015673004`)
+3. Select count (6, 12, 24, 48)
+4. Click **Generate Stickers**
+5. Click **Print Sticker Sheet** or **Download PDF**
+
+**Sticker Format:**
+- 3-column grid layout, A4 size
+- Each sticker: DTDC logo + Code128 barcode + AWB number
+- White background, thin gray border
+
+---
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server (runs at http://localhost:5174)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+---
+
+## Deploy to Vercel
+
+```bash
+# First time — link project
+npx vercel
+
+# Production deploy
+npx vercel --prod
+```
+
+---
+
+## Dark / Light Mode
+
+Dark mode is enabled by default. Toggle via the moon/sun icon in the top navbar.
+
+The app uses Tailwind's `.dark` class on `<html>`. PDF generation uses an isolated hidden `iframe` (no `.dark` class) so printed documents always render with black text and white background regardless of the active theme.
+
+---
+
+## Logo Transparency
+
+`dtdc-logo-transparent.png` was generated by removing the black background from the original PNG using `jimp`:
 
 ```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+// pixels with r<40, g<40, b<40 → alpha = 0 (transparent)
+image.scan(0, 0, w, h, (x, y, idx) => {
+  if (r < 40 && g < 40 && b < 40) data[idx + 3] = 0
+})
 ```
+
+---
+
+## Key Dependencies
+
+| Package | Why |
+|---|---|
+| `react-barcode` | Renders real scannable Code128 SVG barcodes |
+| `react-to-print` | Print sticker sheet via browser print dialog |
+| `jspdf` | Creates PDF file from canvas image |
+| `html2canvas` | Captures DOM element as image for PDF |
+| `framer-motion` | Smooth modal open/close animations |
+| `recharts` | Revenue and delivery status charts |
+| `lucide-react` | All UI icons |
+| `jimp` (devDep) | One-time script to remove logo background |
+| `puppeteer` (devDep) | Automated screenshots during development |
