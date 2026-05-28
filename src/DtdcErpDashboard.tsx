@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { BillingPage } from './BillingInvoice'
+import { useBranch } from './hooks/useBranch'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   LayoutDashboard, Package, MapPin, Truck, Users, Tag, BarChart3, Settings,
@@ -18,7 +20,7 @@ import { useReactToPrint } from 'react-to-print'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
-type ActivePage = 'dashboard' | 'booking' | 'tracking' | 'delivery' | 'customers' | 'sticker' | 'reports' | 'settings'
+type ActivePage = 'dashboard' | 'booking' | 'tracking' | 'delivery' | 'customers' | 'sticker' | 'reports' | 'settings' | 'billing'
 
 interface CustomerRecord {
   id: string
@@ -1339,8 +1341,8 @@ function CustomersPage() {
 }
 
 function StickerPage() {
-  const [startAwb, setStartAwb] = useState('D1015673004')
-  const [count, setCount] = useState(24)
+  const [startAwb, setStartAwb] = useState('D1015673001')
+  const [endAwb, setEndAwb] = useState('D1015673024')
   const [generated, setGenerated] = useState(false)
   const [awbList, setAwbList] = useState<string[]>([])
   const printRef = useRef<HTMLDivElement>(null)
@@ -1365,20 +1367,33 @@ function StickerPage() {
     const pdfWidth = pdf.internal.pageSize.getWidth()
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-    pdf.save(`DTDC_Stickers_${startAwb}.pdf`)
+    pdf.save(`DTDC_Stickers.pdf`)
   }
 
   const generateStickers = () => {
     const prefix = startAwb.replace(/\d+$/, '')
+    const endPrefix = endAwb.replace(/\d+$/, '')
     const startNum = parseInt(startAwb.replace(/\D/g, ''), 10)
-    if (isNaN(startNum)) return
-    const list = Array.from({ length: count }, (_, i) => {
-      const num = String(startNum + i).padStart(startAwb.replace(/\D/g, '').length, '0')
+    const endNum = parseInt(endAwb.replace(/\D/g, ''), 10)
+    if (isNaN(startNum) || isNaN(endNum)) return
+    if (prefix !== endPrefix) { alert('Start and End AWB must have the same prefix (e.g. both D101...)'); return }
+    if (endNum < startNum) { alert('End AWB must be greater than or equal to Start AWB'); return }
+    if (endNum - startNum + 1 > 500) { alert('Range too large — max 500 stickers at once'); return }
+    const digitLen = startAwb.replace(/\D/g, '').length
+    const list = Array.from({ length: endNum - startNum + 1 }, (_, i) => {
+      const num = String(startNum + i).padStart(digitLen, '0')
       return `${prefix}${num}`
     })
     setAwbList(list)
     setGenerated(true)
   }
+
+  const rangeCount = (() => {
+    const s = parseInt(startAwb.replace(/\D/g, ''), 10)
+    const e = parseInt(endAwb.replace(/\D/g, ''), 10)
+    if (isNaN(s) || isNaN(e) || e < s) return null
+    return e - s + 1
+  })()
 
   return (
     <div className="space-y-6">
@@ -1398,19 +1413,23 @@ function StickerPage() {
             <input
               value={startAwb}
               onChange={e => setStartAwb(e.target.value)}
-              placeholder="D1015673004"
+              placeholder="D1015673001"
               className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-red transition-all"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Number of Stickers</label>
-            <select
-              value={count}
-              onChange={e => setCount(Number(e.target.value))}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 dark:bg-slate-900 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red transition-all"
-            >
-              {[12, 24, 48, 72, 100, 150].map(n => <option key={n} value={n}>{n} Stickers</option>)}
-            </select>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              End AWB Number
+              {rangeCount !== null && (
+                <span className="ml-2 normal-case text-primary-red font-semibold">{rangeCount} stickers</span>
+              )}
+            </label>
+            <input
+              value={endAwb}
+              onChange={e => setEndAwb(e.target.value)}
+              placeholder="D1015673048"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-red transition-all"
+            />
           </div>
           <div className="flex items-end">
             <button
@@ -1672,6 +1691,26 @@ function SettingsPage() {
     companyName: 'Desk To Desk Courier & Cargo Ltd.', supportEmail: 'support@desktodesk.com', timezone: 'Asia/Kolkata',
   })
 
+  // ── Billing / Branch settings ──────────────────────────────────────────────
+  const { branch, saving: branchSaving, saveBranch } = useBranch()
+  const [branchForm, setBranchForm] = React.useState(branch)
+  const [branchSaved, setBranchSaved] = React.useState(false)
+
+  React.useEffect(() => {
+    if (branch && !branchForm) setBranchForm(branch)
+  }, [branch])
+
+  const updateBranch = (key: string, value: string) =>
+    setBranchForm(f => f ? { ...f, [key]: value } : f)
+
+  const handleSaveBranch = async () => {
+    if (!branchForm) return
+    await saveBranch(branchForm)
+    setBranchSaved(true)
+    setTimeout(() => setBranchSaved(false), 2500)
+  }
+  // ──────────────────────────────────────────────────────────────────────────
+
   const toggle = (key: string) => setSettings(s => ({ ...s, [key]: !s[key as keyof typeof s] }))
 
   const Toggle = ({ checked, onToggle }: { checked: boolean; onToggle: () => void }) => (
@@ -1743,6 +1782,99 @@ function SettingsPage() {
         </div>
       ))}
 
+      {/* Billing Settings — Branch & Bank Details */}
+      <div className="glass-panel p-5 rounded-2xl">
+        <h2 className="font-bold text-gray-900 dark:text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2 mb-5 flex items-center gap-2">
+          <FileText size={14} className="text-primary-red" />
+          Billing Settings — Branch & Bank Details
+        </h2>
+        {!branchForm ? (
+          <div className="flex items-center gap-2 text-xs text-gray-400 py-4">
+            <div className="w-4 h-4 border border-primary-red border-t-transparent rounded-full animate-spin" />
+            Loading branch info...
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {/* Branch info */}
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3">Branch Information</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {([
+                  { label: 'Branch / Company Name', key: 'name', placeholder: 'Desk To Desk Courier & Cargo' },
+                  { label: 'GST Number', key: 'gstNo', placeholder: '22AAAAA0000A1Z5' },
+                  { label: 'Phone', key: 'phone', placeholder: '9800000000' },
+                  { label: 'Email', key: 'email', placeholder: 'ops@desktodesk.com' },
+                ] as const).map(f => (
+                  <div key={f.key}>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
+                    <input
+                      value={branchForm[f.key]}
+                      onChange={e => updateBranch(f.key, e.target.value)}
+                      placeholder={f.placeholder}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all placeholder:text-gray-600"
+                    />
+                  </div>
+                ))}
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Address</label>
+                  <textarea
+                    rows={2}
+                    value={branchForm.address}
+                    onChange={e => updateBranch('address', e.target.value)}
+                    placeholder="Branch full address"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red resize-none transition-all placeholder:text-gray-600"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bank info */}
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3">Bank Details (shown on invoice)</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {([
+                  { label: 'Account Holder Name', key: 'accountHolder', placeholder: 'Desk To Desk Courier & Cargo' },
+                  { label: 'Bank Name', key: 'bankName', placeholder: 'State Bank of India' },
+                  { label: 'Account Number', key: 'accountNo', placeholder: '000000000000' },
+                  { label: 'IFSC Code', key: 'ifscCode', placeholder: 'SBIN0000000' },
+                  { label: 'Branch Name', key: 'branchName', placeholder: 'Mumbai Main Branch' },
+                ] as const).map(f => (
+                  <div key={f.key}>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{f.label}</label>
+                    <input
+                      value={branchForm[f.key]}
+                      onChange={e => updateBranch(f.key, e.target.value)}
+                      placeholder={f.placeholder}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary-red transition-all placeholder:text-gray-600"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              {branchSaved && (
+                <span className="flex items-center gap-1.5 text-xs font-bold text-green-400">
+                  <Check size={13} /> Branch details saved successfully
+                </span>
+              )}
+              {!branchSaved && <span />}
+              <button
+                onClick={handleSaveBranch}
+                disabled={branchSaving}
+                className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-white rounded-xl text-xs font-bold transition-all shadow-neon-red disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 flex items-center gap-2"
+              >
+                {branchSaving ? (
+                  <><div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" /> Saving...</>
+                ) : (
+                  <><Check size={13} /> Save Branch & Bank Details</>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="flex justify-end pt-2">
         <button className="px-5 py-2.5 bg-gradient-to-r from-primary-red to-red-600 hover:scale-[1.02] text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all shadow-neon-red">
           Save Settings preference
@@ -1760,6 +1892,7 @@ const navItems = [
   { id: 'customers' as ActivePage, label: 'Shippers List', icon: Users },
   { id: 'sticker' as ActivePage, label: 'Print Labels', icon: Tag },
   { id: 'reports' as ActivePage, label: 'Systems Audit', icon: BarChart3 },
+  { id: 'billing' as ActivePage, label: 'Billing', icon: FileText },
   { id: 'settings' as ActivePage, label: 'Preferences', icon: Settings },
 ]
 
@@ -1818,6 +1951,7 @@ export function DtdcErpDashboard() {
     customers: <CustomersPage />,
     sticker: <StickerPage />,
     reports: <ReportsPage />,
+    billing: <BillingPage />,
     settings: <SettingsPage />,
   }
 
