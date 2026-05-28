@@ -45,7 +45,7 @@ export interface BranchInfo {
 
 export interface Invoice {
   id: string
-  invoiceNo: string
+  invoiceNo?: string
   customer: CustomerBillingInfo
   month: number
   year: number

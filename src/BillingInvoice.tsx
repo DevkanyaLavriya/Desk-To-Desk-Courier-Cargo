@@ -112,16 +112,16 @@ function AddCustomerModal({ onSave, onClose, existing }: {
           <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Fixed Fields</p>
 
           {([
-            { label: 'Customer Name', key: 'name', placeholder: 'Rajesh Kumar Enterprises', required: true },
-            { label: 'GST Number', key: 'gstNo', placeholder: '22AAAAA0000A1Z5' },
-            { label: 'Phone', key: 'phone', placeholder: '9876543210' },
-            { label: 'Email', key: 'email', placeholder: 'billing@example.com' },
-          ] as const).map(f => (
+            { label: 'Customer Name', key: 'name', placeholder: 'Rajesh Kumar Enterprises', required: true as boolean },
+            { label: 'GST Number', key: 'gstNo', placeholder: '22AAAAA0000A1Z5', required: false as boolean },
+            { label: 'Phone', key: 'phone', placeholder: '9876543210', required: false as boolean },
+            { label: 'Email', key: 'email', placeholder: 'billing@example.com', required: false as boolean },
+          ]).map(f => (
             <div key={f.key}>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                 {f.label}{f.required && <span className="text-red-400 ml-0.5">*</span>}
               </label>
-              <input value={form[f.key] ?? ''} onChange={e => update(f.key, e.target.value)}
+              <input value={(form[f.key as keyof CustomerBillingInfo] as string) ?? ''} onChange={e => update(f.key as keyof CustomerBillingInfo, e.target.value)}
                 placeholder={f.placeholder}
                 className="w-full px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-red placeholder:text-gray-600 transition-all" />
             </div>
